@@ -827,3 +827,17 @@
 [11-Aug-26 15:05:51 - INFO] - anony: PyTgCalls client(s) started.
 [11-Aug-26 15:05:51 - INFO] - anony: Loaded 26 modules.
 [11-Aug-26 15:05:51 - INFO] - anony: Loaded 2 sudo users.
+[11-Aug-26 15:10:43 - WARNING] - anony: ArcAPI download failed [arc] for: mRD0-GxqHVo
+[11-Aug-26 15:12:22 - WARNING] - anony: ArcAPI download failed [arc] for: rfTgO9rpqck
+[11-Aug-26 15:14:01 - INFO] - anony: Stopping...
+[11-Aug-26 15:15:41 - INFO] - anony: Cache directories updated.
+[11-Aug-26 15:15:42 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 15:16:01 - INFO] - anony: Cache directories updated.
+[11-Aug-26 15:16:02 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 15:16:02 - INFO] - anony: Database connection successful. (0.24s)
+[11-Aug-26 15:16:02 - INFO] - anony: Database cache loaded.
+[11-Aug-26 15:16:03 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 15:16:05 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 15:16:05 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 15:16:05 - INFO] - anony: Loaded 26 modules.
+[11-Aug-26 15:16:05 - INFO] - anony: Loaded 2 sudo users.

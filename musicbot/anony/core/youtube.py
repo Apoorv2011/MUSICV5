@@ -62,29 +62,39 @@ async def _jiosaavn_download(song_id: str) -> str | None:
 
 # ── ArcAPI (job-based async) ──────────────────────────────────────────────────
 
-async def _arc_start_job(video_id: str, is_video: bool = False) -> str | None:
-    """POST to /youtube/v2/download → returns job_id."""
+async def _arc_start_job(
+    query: str, is_video: bool = False
+) -> tuple[str | None, str | None]:
+    """Start an ArcAPI download and return (job_id, direct_url)."""
     if not ARC_API_URL or not ARC_API_KEY:
-        return None
+        return None, None
     try:
         async with aiohttp.ClientSession() as s:
             async with s.get(
                 f"{ARC_API_URL}/youtube/v2/download",
                 params={
-                    "query": video_id,
+                    "query": query,
                     "isVideo": "true" if is_video else "false",
                     "api_key": ARC_API_KEY,
                 },
                 timeout=aiohttp.ClientTimeout(total=15),
             ) as r:
                 if r.status != 200:
-                    logger.warning("ArcAPI start job HTTP %s for %s", r.status, video_id)
-                    return None
+                    logger.warning("ArcAPI start job HTTP %s for %s", r.status, query)
+                    return None, None
                 data = await r.json()
-                return data.get("job_id")
+                result = data.get("result") or {}
+                direct_url = (
+                    result.get("public_url")
+                    or result.get("cdn")
+                    or result.get("url")
+                )
+                if direct_url:
+                    return None, direct_url
+                return data.get("job_id"), None
     except Exception as e:
         logger.warning("ArcAPI start job error: %s", e)
-        return None
+        return None, None
 
 
 async def _arc_poll_job(job_id: str, timeout: int = 60) -> str | None:
@@ -108,9 +118,15 @@ async def _arc_poll_job(job_id: str, timeout: int = 60) -> str | None:
                     status = job.get("status") or data.get("status")
                     if status == "done":
                         result = job.get("result", {})
-                        public_url = result.get("public_url", "")
+                        public_url = (
+                            result.get("public_url")
+                            or result.get("cdn")
+                            or result.get("url")
+                        )
                         if public_url:
                             # public_url is a relative path like /media/ID.mp3
+                            if public_url.startswith(("http://", "https://")):
+                                return public_url
                             return f"{ARC_API_URL}{public_url}"
                         return None
                     if status in ("failed", "error"):
@@ -123,9 +139,11 @@ async def _arc_poll_job(job_id: str, timeout: int = 60) -> str | None:
     return None
 
 
-async def _arc_download(video_id: str, is_video: bool = False) -> str | None:
-    """Full Arc flow: start job → poll → return stream URL."""
-    job_id = await _arc_start_job(video_id, is_video)
+async def _arc_download(query: str, is_video: bool = False) -> str | None:
+    """Full Arc flow: return a direct URL or start and poll a job."""
+    job_id, direct_url = await _arc_start_job(query, is_video)
+    if direct_url:
+        return direct_url
     if not job_id:
         return None
     return await _arc_poll_job(job_id)
@@ -298,7 +316,10 @@ class YouTube:
             return None
 
         if mode == "arc":
-            stream_url = await _arc_download(video_id, is_video=video)
+            stream_url = await _arc_download(
+                f"https://www.youtube.com/watch?v={video_id}",
+                is_video=video,
+            )
             if stream_url:
                 result = await _download_to_file(stream_url, filename)
                 if result:
@@ -317,7 +338,10 @@ class YouTube:
                 _schedule_delete(result)
                 return result
 
-        stream_url = await _arc_download(video_id, is_video=video)
+        stream_url = await _arc_download(
+            f"https://www.youtube.com/watch?v={video_id}",
+            is_video=video,
+        )
         if stream_url:
             result = await _download_to_file(stream_url, filename)
             if result:
