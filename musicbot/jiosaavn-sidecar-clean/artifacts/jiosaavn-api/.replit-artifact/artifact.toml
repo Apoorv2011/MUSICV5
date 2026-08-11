@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "JioSaavn API"
+version = "1.0.0"
+id = "artifacts/jiosaavn-api"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23984
+
+[services.development]
+run = "pnpm --filter @workspace/jiosaavn-api run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jiosaavn-api", "run", "build" ]
+publicDir = "artifacts/jiosaavn-api/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23984"
+BASE_PATH = "/"

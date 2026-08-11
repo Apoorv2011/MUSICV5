@@ -1,0 +1,819 @@
+[21-Jul-26 14:33:04 - INFO] - anony: Cache directories updated.
+[21-Jul-26 14:33:04 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[21-Jul-26 14:33:06 - INFO] - anony: Database connection successful. (0.42s)
+[21-Jul-26 14:33:06 - INFO] - anony: Database cache loaded.
+[21-Jul-26 14:33:12 - INFO] - anony: Bot started as @chillGenAI_Bot
+[21-Jul-26 14:33:14 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[21-Jul-26 14:33:14 - INFO] - anony: PyTgCalls client(s) started.
+[21-Jul-26 14:33:14 - INFO] - anony: Loaded 24 modules.
+[21-Jul-26 14:33:14 - INFO] - anony: Loaded 1 sudo users.
+[21-Jul-26 14:34:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/Lv-Nd7NKFus.m4a
+[21-Jul-26 14:35:20 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/NgjERPTaC4Y.m4a
+[21-Jul-26 14:38:21 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/hUVjx_RhMl0.m4a
+[21-Jul-26 14:39:00 - INFO] - anony: Cache cleanup: removed downloads/Lv-Nd7NKFus.m4a
+[21-Jul-26 14:40:20 - INFO] - anony: Cache cleanup: removed downloads/NgjERPTaC4Y.m4a
+[21-Jul-26 14:40:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/p4bLRn0F1IU.m4a
+[21-Jul-26 14:43:21 - INFO] - anony: Cache cleanup: removed downloads/hUVjx_RhMl0.m4a
+[21-Jul-26 14:45:24 - INFO] - anony: Cache cleanup: removed downloads/p4bLRn0F1IU.m4a
+[21-Jul-26 14:46:53 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ZQBgxRuJQqg.m4a
+[21-Jul-26 14:51:53 - INFO] - anony: Cache cleanup: removed downloads/ZQBgxRuJQqg.m4a
+[21-Jul-26 15:10:10 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/F8mGLRGuMXw.m4a
+[21-Jul-26 15:15:10 - INFO] - anony: Cache cleanup: removed downloads/F8mGLRGuMXw.m4a
+[21-Jul-26 15:45:22 - INFO] - anony: Cache directories updated.
+[21-Jul-26 15:45:23 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[21-Jul-26 15:45:25 - INFO] - anony: Database connection successful. (0.43s)
+[21-Jul-26 15:45:25 - INFO] - anony: Database cache loaded.
+[21-Jul-26 15:45:26 - INFO] - anony: Bot started as @chillGenAI_Bot
+[21-Jul-26 15:45:28 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[21-Jul-26 15:45:28 - INFO] - anony: PyTgCalls client(s) started.
+[21-Jul-26 15:45:28 - INFO] - anony: Loaded 24 modules.
+[21-Jul-26 15:45:28 - INFO] - anony: Loaded 1 sudo users.
+[21-Jul-26 15:57:49 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/YKhPHVIijqc.m4a
+[21-Jul-26 16:02:49 - INFO] - anony: Cache cleanup: removed downloads/YKhPHVIijqc.m4a
+[21-Jul-26 16:10:28 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/U2QNhsAgIIE.m4a
+[21-Jul-26 16:15:28 - INFO] - anony: Cache cleanup: removed downloads/U2QNhsAgIIE.m4a
+[21-Jul-26 16:18:12 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/oafxkMv4xnc.m4a
+[21-Jul-26 16:20:57 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/j18MRhEfmPk.m4a
+[21-Jul-26 16:23:12 - INFO] - anony: Cache cleanup: removed downloads/oafxkMv4xnc.m4a
+[21-Jul-26 16:24:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/SAlivzR5FVE.m4a
+[21-Jul-26 16:25:57 - INFO] - anony: Cache cleanup: removed downloads/j18MRhEfmPk.m4a
+[21-Jul-26 16:29:23 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/nEFD87dGspA.m4a
+[21-Jul-26 16:29:24 - INFO] - anony: Cache cleanup: removed downloads/SAlivzR5FVE.m4a
+[21-Jul-26 16:31:30 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/DkzVKV7awbU.m4a
+[21-Jul-26 16:32:46 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/nyuo9-OjNNg.m4a
+[21-Jul-26 16:34:23 - INFO] - anony: Cache cleanup: removed downloads/nEFD87dGspA.m4a
+[21-Jul-26 16:36:29 - WARNING] - anony: ArcAPI job d383283d867037f0 timed out after 60s
+[21-Jul-26 16:36:29 - WARNING] - anony: ArcAPI download failed [arc] for: PhxrWuiyVuM
+[21-Jul-26 16:36:30 - INFO] - anony: Cache cleanup: removed downloads/DkzVKV7awbU.m4a
+[21-Jul-26 16:36:47 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/0KplzWjW5yI.m4a
+[21-Jul-26 16:36:54 - WARNING] - anony: ArcAPI job 5bc74bc9cd64c9b6 timed out after 60s
+[21-Jul-26 16:36:54 - WARNING] - anony: ArcAPI download failed [arc] for: PhxrWuiyVuM
+[21-Jul-26 16:37:35 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/fPO76Jlnz6c.m4a
+[21-Jul-26 16:37:46 - INFO] - anony: Cache cleanup: removed downloads/nyuo9-OjNNg.m4a
+[21-Jul-26 16:41:47 - INFO] - anony: Cache cleanup: removed downloads/0KplzWjW5yI.m4a
+[21-Jul-26 16:42:35 - INFO] - anony: Cache cleanup: removed downloads/fPO76Jlnz6c.m4a
+[21-Jul-26 16:46:04 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/IrxMWAGYUkI.mp4
+[21-Jul-26 16:51:04 - INFO] - anony: Cache cleanup: removed downloads/IrxMWAGYUkI.mp4
+[25-Jul-26 11:54:22 - INFO] - anony: Cache directories updated.
+[25-Jul-26 11:54:23 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[25-Jul-26 11:54:24 - INFO] - anony: Database connection successful. (0.24s)
+[25-Jul-26 11:54:24 - INFO] - anony: Database cache loaded.
+[25-Jul-26 11:54:25 - INFO] - anony: Bot started as @chillGenAI_Bot
+[25-Jul-26 11:54:27 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[25-Jul-26 11:54:27 - INFO] - anony: PyTgCalls client(s) started.
+[25-Jul-26 11:54:27 - INFO] - anony: Loaded 24 modules.
+[25-Jul-26 11:54:27 - INFO] - anony: Loaded 1 sudo users.
+[25-Jul-26 11:58:00 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/dKY18jnA.m4a
+[25-Jul-26 12:01:57 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/AX6OrbgS8lI.m4a
+[25-Jul-26 12:03:00 - INFO] - anony: Cache cleanup: removed downloads/dKY18jnA.m4a
+[25-Jul-26 12:03:58 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/nfs8NYg7yQM.m4a
+[25-Jul-26 12:06:57 - INFO] - anony: Cache cleanup: removed downloads/AX6OrbgS8lI.m4a
+[25-Jul-26 12:07:06 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/s5Cf2J64Xmk.m4a
+[25-Jul-26 12:07:38 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/AX6OrbgS8lI.m4a
+[25-Jul-26 12:08:58 - INFO] - anony: Cache cleanup: removed downloads/nfs8NYg7yQM.m4a
+[25-Jul-26 12:10:08 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/PNozaFzqOvI.m4a
+[25-Jul-26 12:11:36 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/4fDXcln1JpU.m4a
+[25-Jul-26 12:11:45 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/q4xvv4Xs3UQ.m4a
+[25-Jul-26 12:12:06 - INFO] - anony: Cache cleanup: removed downloads/s5Cf2J64Xmk.m4a
+[25-Jul-26 12:12:38 - INFO] - anony: Cache cleanup: removed downloads/AX6OrbgS8lI.m4a
+[25-Jul-26 12:12:51 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/hbqoaJ8sKsQ.m4a
+[25-Jul-26 12:15:08 - INFO] - anony: Cache cleanup: removed downloads/PNozaFzqOvI.m4a
+[25-Jul-26 12:16:36 - INFO] - anony: Cache cleanup: removed downloads/4fDXcln1JpU.m4a
+[25-Jul-26 12:16:45 - INFO] - anony: Cache cleanup: removed downloads/q4xvv4Xs3UQ.m4a
+[25-Jul-26 12:17:47 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/WgTMeICssXY.m4a
+[25-Jul-26 12:17:51 - INFO] - anony: Cache cleanup: removed downloads/hbqoaJ8sKsQ.m4a
+[25-Jul-26 12:21:12 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/o-zOcpp9JAA.m4a
+[25-Jul-26 12:22:38 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/mRD0-GxqHVo.m4a
+[25-Jul-26 12:22:47 - INFO] - anony: Cache cleanup: removed downloads/WgTMeICssXY.m4a
+[25-Jul-26 12:23:37 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/H5kjpHUgp5o.m4a
+[25-Jul-26 12:24:18 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/QqJ9zrY_ITw.m4a
+[25-Jul-26 12:26:13 - INFO] - anony: Cache cleanup: removed downloads/o-zOcpp9JAA.m4a
+[25-Jul-26 12:27:38 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.m4a
+[25-Jul-26 12:28:37 - INFO] - anony: Cache cleanup: removed downloads/H5kjpHUgp5o.m4a
+[25-Jul-26 12:29:18 - INFO] - anony: Cache cleanup: removed downloads/QqJ9zrY_ITw.m4a
+[26-Jul-26 01:42:56 - INFO] - anony: Cache directories updated.
+[26-Jul-26 01:42:57 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 01:42:59 - INFO] - anony: Database connection successful. (0.38s)
+[26-Jul-26 01:42:59 - INFO] - anony: Database cache loaded.
+[26-Jul-26 01:42:59 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 01:43:01 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 01:43:01 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 01:43:02 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 01:43:02 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 01:48:44 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/aKBkK3g25Dw.m4a
+[26-Jul-26 01:53:44 - INFO] - anony: Cache cleanup: removed downloads/aKBkK3g25Dw.m4a
+[26-Jul-26 01:56:37 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/SXG38_5LDso.m4a
+[26-Jul-26 02:00:23 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ziABaAUq5Ck.m4a
+[26-Jul-26 02:01:37 - INFO] - anony: Cache cleanup: removed downloads/SXG38_5LDso.m4a
+[26-Jul-26 02:03:34 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/SXG38_5LDso.m4a
+[26-Jul-26 02:05:23 - INFO] - anony: Cache cleanup: removed downloads/ziABaAUq5Ck.m4a
+[26-Jul-26 02:17:46 - INFO] - anony: Cache directories updated.
+[26-Jul-26 02:17:47 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 02:17:48 - INFO] - anony: Database connection successful. (0.38s)
+[26-Jul-26 02:17:48 - INFO] - anony: Database cache loaded.
+[26-Jul-26 02:17:49 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 02:17:51 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 02:17:51 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 02:17:51 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 02:17:51 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 05:23:32 - INFO] - anony: Cache directories updated.
+[26-Jul-26 05:23:33 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 05:23:34 - INFO] - anony: Database connection successful. (0.26s)
+[26-Jul-26 05:23:34 - INFO] - anony: Database cache loaded.
+[26-Jul-26 05:23:35 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 05:23:37 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 05:23:37 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 05:23:37 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 05:23:37 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 06:20:21 - INFO] - anony: Cache directories updated.
+[26-Jul-26 06:20:21 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 06:20:22 - INFO] - anony: Database connection successful. (0.41s)
+[26-Jul-26 06:20:22 - INFO] - anony: Database cache loaded.
+[26-Jul-26 06:20:28 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 06:20:30 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 06:20:30 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 06:20:30 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 06:20:30 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 06:27:26 - INFO] - anony: Stopping...
+[26-Jul-26 06:27:31 - INFO] - anony: Cache directories updated.
+[26-Jul-26 06:27:31 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 06:27:32 - INFO] - anony: Database connection successful. (0.31s)
+[26-Jul-26 06:27:32 - INFO] - anony: Database cache loaded.
+[26-Jul-26 06:27:33 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 06:27:35 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 06:27:35 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 06:27:35 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 06:27:35 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 06:28:27 - INFO] - anony: Downloaded via Gateway [arc]: downloads/mRD0-GxqHVo.m4a
+[26-Jul-26 06:31:00 - INFO] - anony: Downloaded via JioSaavn [jio]: downloads/AK3icrxP.m4a
+[26-Jul-26 06:33:27 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.m4a
+[26-Jul-26 06:36:00 - INFO] - anony: Cache cleanup: removed downloads/AK3icrxP.m4a
+[26-Jul-26 06:39:56 - INFO] - anony: Stopping...
+[26-Jul-26 06:40:07 - INFO] - anony: Cache directories updated.
+[26-Jul-26 06:40:07 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 06:40:08 - INFO] - anony: Database connection successful. (0.35s)
+[26-Jul-26 06:40:08 - INFO] - anony: Database cache loaded.
+[26-Jul-26 06:40:09 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 06:40:11 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 06:40:11 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 06:40:11 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 06:40:11 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 06:41:01 - INFO] - anony: 📥 Downloading: QZsS2ZVj.mp3
+[26-Jul-26 06:41:01 - INFO] - anony:    Content-Type: audio/mp4
+[26-Jul-26 06:41:01 - INFO] - anony:    Size: 9678150 bytes
+[26-Jul-26 06:41:01 - INFO] - anony: ✅ File saved: QZsS2ZVj.mp3 (9678150 bytes)
+[26-Jul-26 06:41:01 - INFO] - anony: ✅ Downloaded via JioSaavn [auto]: QZsS2ZVj.mp3
+[26-Jul-26 06:41:35 - INFO] - anony: 📥 Downloading: stwwoLXJ.mp3
+[26-Jul-26 06:41:35 - INFO] - anony:    Content-Type: audio/mp4
+[26-Jul-26 06:41:35 - INFO] - anony:    Size: 9678150 bytes
+[26-Jul-26 06:41:36 - INFO] - anony: ✅ File saved: stwwoLXJ.mp3 (9678150 bytes)
+[26-Jul-26 06:41:36 - INFO] - anony: ✅ Downloaded via JioSaavn [auto]: stwwoLXJ.mp3
+[26-Jul-26 06:45:46 - INFO] - anony: Stopping...
+[26-Jul-26 07:20:59 - INFO] - anony: Cache directories updated.
+[26-Jul-26 07:21:00 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 07:21:01 - INFO] - anony: Database connection successful. (0.25s)
+[26-Jul-26 07:21:01 - INFO] - anony: Database cache loaded.
+[26-Jul-26 07:21:02 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 07:21:04 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 07:21:04 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 07:21:04 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 07:21:04 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 07:24:38 - INFO] - anony: Stopping...
+[26-Jul-26 07:24:52 - INFO] - anony: Cache directories updated.
+[26-Jul-26 07:24:52 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[26-Jul-26 07:24:52 - INFO] - anony: Database connection successful. (0.18s)
+[26-Jul-26 07:24:52 - INFO] - anony: Database cache loaded.
+[26-Jul-26 07:24:53 - INFO] - anony: Bot started as @chillGenAI_Bot
+[26-Jul-26 07:24:55 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[26-Jul-26 07:24:55 - INFO] - anony: PyTgCalls client(s) started.
+[26-Jul-26 07:24:55 - INFO] - anony: Loaded 24 modules.
+[26-Jul-26 07:24:55 - INFO] - anony: Loaded 2 sudo users.
+[26-Jul-26 07:25:25 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/rfTgO9rpqck.m4a
+[26-Jul-26 07:30:25 - INFO] - anony: Cache cleanup: removed downloads/rfTgO9rpqck.m4a
+[28-Jul-26 15:03:29 - INFO] - anony: Cache directories updated.
+[28-Jul-26 15:03:30 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[28-Jul-26 15:03:31 - INFO] - anony: Database connection successful. (0.38s)
+[28-Jul-26 15:03:31 - INFO] - anony: Database cache loaded.
+[28-Jul-26 15:03:32 - INFO] - anony: Bot started as @chillGenAI_Bot
+[28-Jul-26 15:03:34 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[28-Jul-26 15:03:35 - INFO] - anony: PyTgCalls client(s) started.
+[28-Jul-26 15:03:35 - INFO] - anony: Loaded 24 modules.
+[28-Jul-26 15:03:35 - INFO] - anony: Loaded 2 sudo users.
+[28-Jul-26 15:05:05 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/Pkh8UtuejGw.m4a
+[28-Jul-26 15:07:36 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/jIQ0Dx-4peE.m4a
+[28-Jul-26 15:08:10 - INFO] - anony: Stopping...
+[28-Jul-26 15:09:38 - INFO] - anony: Cache directories updated.
+[28-Jul-26 15:09:38 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[28-Jul-26 15:09:39 - INFO] - anony: Database connection successful. (0.33s)
+[28-Jul-26 15:09:39 - INFO] - anony: Database cache loaded.
+[28-Jul-26 15:09:40 - INFO] - anony: Bot started as @chillGenAI_Bot
+[28-Jul-26 15:09:42 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[28-Jul-26 15:09:42 - INFO] - anony: PyTgCalls client(s) started.
+[28-Jul-26 15:09:42 - INFO] - anony: Loaded 24 modules.
+[28-Jul-26 15:09:42 - INFO] - anony: Loaded 2 sudo users.
+[28-Jul-26 15:11:05 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/s7-GTShjcqY.m4a
+[28-Jul-26 15:16:05 - INFO] - anony: Cache cleanup: removed downloads/s7-GTShjcqY.m4a
+[28-Jul-26 15:42:06 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/QlCyFYY1_jA.m4a
+[28-Jul-26 15:44:46 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/Q6978DnF8C4.m4a
+[28-Jul-26 15:47:06 - INFO] - anony: Cache cleanup: removed downloads/QlCyFYY1_jA.m4a
+[28-Jul-26 15:47:17 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/JGwWNGJdvx8.m4a
+[28-Jul-26 15:49:46 - INFO] - anony: Cache cleanup: removed downloads/Q6978DnF8C4.m4a
+[28-Jul-26 15:51:43 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/072lEafKN7k.m4a
+[28-Jul-26 15:52:17 - INFO] - anony: Cache cleanup: removed downloads/JGwWNGJdvx8.m4a
+[02-Aug-26 13:30:29 - INFO] - anony: Cache directories updated.
+[02-Aug-26 13:30:30 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[02-Aug-26 13:30:31 - INFO] - anony: Database connection successful. (0.35s)
+[02-Aug-26 13:30:31 - INFO] - anony: Database cache loaded.
+[02-Aug-26 13:30:32 - INFO] - anony: Bot started as @chillGenAI_Bot
+[02-Aug-26 13:30:34 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[02-Aug-26 13:30:34 - INFO] - anony: PyTgCalls client(s) started.
+[02-Aug-26 13:30:34 - INFO] - anony: Loaded 24 modules.
+[02-Aug-26 13:30:34 - INFO] - anony: Loaded 2 sudo users.
+[02-Aug-26 13:31:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/9dcBy2uXL7E.m4a
+[02-Aug-26 13:32:11 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/mRD0-GxqHVo.m4a
+[02-Aug-26 13:32:47 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/e3OBPOKtMgA.m4a
+[02-Aug-26 13:33:53 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/IrxMWAGYUkI.m4a
+[02-Aug-26 13:36:31 - INFO] - anony: Cache cleanup: removed downloads/9dcBy2uXL7E.m4a
+[02-Aug-26 13:37:11 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.m4a
+[02-Aug-26 13:37:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/o-zOcpp9JAA.m4a
+[02-Aug-26 13:37:47 - INFO] - anony: Cache cleanup: removed downloads/e3OBPOKtMgA.m4a
+[02-Aug-26 13:38:53 - INFO] - anony: Cache cleanup: removed downloads/IrxMWAGYUkI.m4a
+[02-Aug-26 13:42:31 - INFO] - anony: Cache cleanup: removed downloads/o-zOcpp9JAA.m4a
+[02-Aug-26 14:04:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/7170mQbnpZI.m4a
+[02-Aug-26 15:53:21 - INFO] - anony: Cache directories updated.
+[02-Aug-26 15:53:22 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[02-Aug-26 15:53:23 - INFO] - anony: Database connection successful. (0.42s)
+[02-Aug-26 15:53:23 - INFO] - anony: Database cache loaded.
+[02-Aug-26 15:53:24 - INFO] - anony: Bot started as @chillGenAI_Bot
+[02-Aug-26 15:53:26 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[02-Aug-26 15:53:26 - INFO] - anony: PyTgCalls client(s) started.
+[02-Aug-26 15:53:26 - INFO] - anony: Loaded 24 modules.
+[02-Aug-26 15:53:26 - INFO] - anony: Loaded 2 sudo users.
+[02-Aug-26 15:59:03 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/Wh-AgS7PKdM.m4a
+[02-Aug-26 15:59:57 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/m9xCgDQoVzE.m4a
+[02-Aug-26 16:04:03 - INFO] - anony: Cache cleanup: removed downloads/Wh-AgS7PKdM.m4a
+[02-Aug-26 16:04:15 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/eOorU_qvoiE.m4a
+[02-Aug-26 16:04:57 - INFO] - anony: Cache cleanup: removed downloads/m9xCgDQoVzE.m4a
+[02-Aug-26 16:07:55 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/cswfR85D7jM.m4a
+[02-Aug-26 16:08:14 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/DF3XjEhJ40Y.m4a
+[02-Aug-26 16:08:54 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/9NY3WNDGtA8.m4a
+[02-Aug-26 16:08:58 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/NB7WuqWzDhw.m4a
+[02-Aug-26 16:09:15 - INFO] - anony: Cache cleanup: removed downloads/eOorU_qvoiE.m4a
+[02-Aug-26 16:12:55 - INFO] - anony: Cache cleanup: removed downloads/cswfR85D7jM.m4a
+[02-Aug-26 16:13:03 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/wEWF2xh5E8s.m4a
+[02-Aug-26 16:13:15 - INFO] - anony: Cache cleanup: removed downloads/DF3XjEhJ40Y.m4a
+[02-Aug-26 16:13:54 - INFO] - anony: Cache cleanup: removed downloads/9NY3WNDGtA8.m4a
+[02-Aug-26 16:13:58 - INFO] - anony: Cache cleanup: removed downloads/NB7WuqWzDhw.m4a
+[02-Aug-26 16:17:47 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ji1TIBybjp4.m4a
+[02-Aug-26 16:18:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ziABaAUq5Ck.m4a
+[02-Aug-26 16:18:03 - INFO] - anony: Cache cleanup: removed downloads/wEWF2xh5E8s.m4a
+[02-Aug-26 16:20:18 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/cbkgO7QoUqM.m4a
+[02-Aug-26 16:21:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/vErusjSffO0.m4a
+[02-Aug-26 16:21:32 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/kqFLQG484pg.m4a
+[02-Aug-26 16:22:47 - INFO] - anony: Cache cleanup: removed downloads/ji1TIBybjp4.m4a
+[02-Aug-26 16:23:00 - INFO] - anony: Cache cleanup: removed downloads/ziABaAUq5Ck.m4a
+[02-Aug-26 16:23:26 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/eOorU_qvoiE.m4a
+[02-Aug-26 16:25:02 - WARNING] - anony: ArcAPI job 987796ae97b7b699 timed out after 60s
+[02-Aug-26 16:25:02 - WARNING] - anony: ArcAPI download failed [arc] for: Nc_aIVZReZw
+[02-Aug-26 16:25:05 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/zHgnRLWe_GE.m4a
+[02-Aug-26 16:25:12 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/5mvCVJIZWtA.m4a
+[02-Aug-26 16:25:18 - INFO] - anony: Cache cleanup: removed downloads/cbkgO7QoUqM.m4a
+[02-Aug-26 16:26:31 - INFO] - anony: Cache cleanup: removed downloads/vErusjSffO0.m4a
+[02-Aug-26 16:26:32 - INFO] - anony: Cache cleanup: removed downloads/kqFLQG484pg.m4a
+[02-Aug-26 16:26:35 - WARNING] - anony: ArcAPI job c0468528f8ac0f54 timed out after 60s
+[02-Aug-26 16:26:35 - WARNING] - anony: ArcAPI download failed [arc] for: Nc_aIVZReZw
+[02-Aug-26 16:28:27 - INFO] - anony: Cache cleanup: removed downloads/eOorU_qvoiE.m4a
+[02-Aug-26 16:29:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/SlHnlxDt2TQ.m4a
+[02-Aug-26 16:29:11 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/mRD0-GxqHVo.mp4
+[02-Aug-26 16:30:05 - INFO] - anony: Cache cleanup: removed downloads/zHgnRLWe_GE.m4a
+[02-Aug-26 16:30:12 - INFO] - anony: Cache cleanup: removed downloads/5mvCVJIZWtA.m4a
+[02-Aug-26 16:32:38 - WARNING] - anony: ArcAPI job a47ff0cb70947568 timed out after 60s
+[02-Aug-26 16:32:38 - WARNING] - anony: ArcAPI download failed [arc] for: Nc_aIVZReZw
+[02-Aug-26 16:33:14 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/0NFxcNheoLc.m4a
+[02-Aug-26 16:34:00 - INFO] - anony: Cache cleanup: removed downloads/SlHnlxDt2TQ.m4a
+[02-Aug-26 16:34:11 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.mp4
+[02-Aug-26 16:34:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/IrxMWAGYUkI.mp4
+[02-Aug-26 16:38:14 - INFO] - anony: Cache cleanup: removed downloads/0NFxcNheoLc.m4a
+[02-Aug-26 16:39:24 - INFO] - anony: Cache cleanup: removed downloads/IrxMWAGYUkI.mp4
+[02-Aug-26 16:39:29 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/lS0qZ2Id0B8.m4a
+[02-Aug-26 16:42:58 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/kKljXVVkgS4.m4a
+[02-Aug-26 16:44:29 - INFO] - anony: Cache cleanup: removed downloads/lS0qZ2Id0B8.m4a
+[02-Aug-26 16:47:55 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ShPTaCJqeFo.m4a
+[02-Aug-26 16:47:58 - INFO] - anony: Cache cleanup: removed downloads/kKljXVVkgS4.m4a
+[02-Aug-26 16:52:53 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/AlvUuGJccKs.m4a
+[02-Aug-26 16:52:55 - INFO] - anony: Cache cleanup: removed downloads/ShPTaCJqeFo.m4a
+[04-Aug-26 11:23:51 - INFO] - anony: Cache directories updated.
+[04-Aug-26 11:23:51 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[04-Aug-26 11:23:53 - INFO] - anony: Database connection successful. (0.43s)
+[04-Aug-26 11:23:53 - INFO] - anony: Database cache loaded.
+[04-Aug-26 11:23:54 - INFO] - anony: Bot started as @chillGenAI_Bot
+[04-Aug-26 11:23:56 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[04-Aug-26 11:23:57 - INFO] - anony: PyTgCalls client(s) started.
+[04-Aug-26 11:23:57 - INFO] - anony: Loaded 24 modules.
+[04-Aug-26 11:23:57 - INFO] - anony: Loaded 2 sudo users.
+[04-Aug-26 11:25:08 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/yO3wABte.m4a
+[04-Aug-26 11:30:08 - INFO] - anony: Cache cleanup: removed downloads/yO3wABte.m4a
+[04-Aug-26 11:30:36 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/o-zOcpp9JAA.m4a
+[04-Aug-26 11:35:36 - INFO] - anony: Cache cleanup: removed downloads/o-zOcpp9JAA.m4a
+[07-Aug-26 10:08:53 - INFO] - anony: Cache directories updated.
+[07-Aug-26 10:08:53 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[07-Aug-26 10:08:55 - INFO] - anony: Database connection successful. (0.37s)
+[07-Aug-26 10:08:55 - INFO] - anony: Database cache loaded.
+[07-Aug-26 10:08:56 - INFO] - anony: Bot started as @chillGenAI_Bot
+[07-Aug-26 10:08:58 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[07-Aug-26 10:08:59 - INFO] - anony: PyTgCalls client(s) started.
+[07-Aug-26 10:08:59 - INFO] - anony: Loaded 24 modules.
+[07-Aug-26 10:08:59 - INFO] - anony: Loaded 2 sudo users.
+[07-Aug-26 10:09:03 - INFO] - anony: Stopping...
+[07-Aug-26 14:01:01 - INFO] - anony: Cache directories updated.
+[07-Aug-26 14:01:02 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[07-Aug-26 14:01:04 - INFO] - anony: Database connection successful. (0.43s)
+[07-Aug-26 14:01:04 - INFO] - anony: Database cache loaded.
+[07-Aug-26 14:01:05 - INFO] - anony: Bot started as @chillGenAI_Bot
+[07-Aug-26 14:01:07 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[07-Aug-26 14:01:07 - INFO] - anony: PyTgCalls client(s) started.
+[07-Aug-26 14:01:07 - INFO] - anony: Loaded 24 modules.
+[07-Aug-26 14:01:07 - INFO] - anony: Loaded 2 sudo users.
+[07-Aug-26 14:01:12 - INFO] - anony: Stopping...
+[07-Aug-26 14:23:13 - INFO] - anony: Cache directories updated.
+[07-Aug-26 14:23:14 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[07-Aug-26 14:23:16 - INFO] - anony: Database connection successful. (0.27s)
+[07-Aug-26 14:23:16 - INFO] - anony: Database cache loaded.
+[07-Aug-26 14:23:16 - INFO] - anony: Bot started as @chillGenAI_Bot
+[07-Aug-26 14:23:18 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[07-Aug-26 14:23:19 - INFO] - anony: PyTgCalls client(s) started.
+[07-Aug-26 14:23:19 - INFO] - anony: Loaded 24 modules.
+[07-Aug-26 14:23:19 - INFO] - anony: Loaded 2 sudo users.
+[07-Aug-26 14:25:27 - INFO] - anony: Stopping...
+[07-Aug-26 14:58:31 - INFO] - anony: Cache directories updated.
+[07-Aug-26 14:58:32 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[07-Aug-26 14:58:34 - INFO] - anony: Database connection successful. (0.51s)
+[07-Aug-26 14:58:34 - INFO] - anony: Database cache loaded.
+[07-Aug-26 14:58:34 - INFO] - anony: Bot started as @chillGenAI_Bot
+[07-Aug-26 14:58:36 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[07-Aug-26 14:58:37 - INFO] - anony: PyTgCalls client(s) started.
+[07-Aug-26 14:58:37 - INFO] - anony: Loaded 24 modules.
+[07-Aug-26 14:58:37 - INFO] - anony: Loaded 2 sudo users.
+[07-Aug-26 14:59:14 - INFO] - anony: Stopping...
+[08-Aug-26 07:31:54 - INFO] - anony: Cache directories updated.
+[08-Aug-26 07:31:54 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 07:31:56 - INFO] - anony: Database connection successful. (0.38s)
+[08-Aug-26 07:31:56 - INFO] - anony: Database cache loaded.
+[08-Aug-26 07:31:57 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 12:43:37 - INFO] - anony: Cache directories updated.
+[08-Aug-26 12:43:38 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 12:43:40 - INFO] - anony: Database connection successful. (0.40s)
+[08-Aug-26 12:43:40 - INFO] - anony: Database cache loaded.
+[08-Aug-26 12:43:40 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 12:43:43 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 12:43:43 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 12:43:43 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 12:43:43 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 12:49:19 - INFO] - anony: Stopping...
+[08-Aug-26 12:55:32 - INFO] - anony: Cache directories updated.
+[08-Aug-26 12:55:32 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 12:55:34 - INFO] - anony: Database connection successful. (0.42s)
+[08-Aug-26 12:55:34 - INFO] - anony: Database cache loaded.
+[08-Aug-26 12:55:35 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 12:55:37 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 12:55:37 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 12:55:37 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 12:55:37 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 12:55:42 - INFO] - anony: Stopping...
+[08-Aug-26 13:20:37 - INFO] - anony: Cache directories updated.
+[08-Aug-26 13:20:38 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 13:20:39 - INFO] - anony: Database connection successful. (0.42s)
+[08-Aug-26 13:20:39 - INFO] - anony: Database cache loaded.
+[08-Aug-26 13:20:40 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 13:20:42 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 13:20:43 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 13:20:43 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 13:20:43 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 13:21:02 - INFO] - anony: Stopping...
+[08-Aug-26 13:40:59 - INFO] - anony: Cache directories updated.
+[08-Aug-26 13:40:59 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 13:41:00 - INFO] - anony: Database connection successful. (0.38s)
+[08-Aug-26 13:41:01 - INFO] - anony: Database cache loaded.
+[08-Aug-26 13:41:02 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 13:41:04 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 13:41:04 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 13:41:04 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 13:41:04 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 13:55:59 - INFO] - anony: Stopping...
+[08-Aug-26 14:11:00 - INFO] - anony: Cache directories updated.
+[08-Aug-26 14:11:01 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 14:11:02 - INFO] - anony: Database connection successful. (0.33s)
+[08-Aug-26 14:11:02 - INFO] - anony: Database cache loaded.
+[08-Aug-26 14:11:03 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 14:11:05 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 14:11:06 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 14:11:06 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 14:11:06 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 14:13:03 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/IrxMWAGYUkI.mp4
+[08-Aug-26 14:13:53 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/BLeOcCeqsfI.m4a
+[08-Aug-26 14:15:22 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/eOorU_qvoiE.m4a
+[08-Aug-26 14:15:42 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/y2fgw1Oqz28.m4a
+[08-Aug-26 14:16:19 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/prrmQ4RtMpA.m4a
+[08-Aug-26 14:16:46 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/Ube5XhN_lpM.m4a
+[08-Aug-26 14:18:03 - INFO] - anony: Cache cleanup: removed downloads/IrxMWAGYUkI.mp4
+[08-Aug-26 14:18:53 - INFO] - anony: Cache cleanup: removed downloads/BLeOcCeqsfI.m4a
+[08-Aug-26 14:20:22 - INFO] - anony: Cache cleanup: removed downloads/eOorU_qvoiE.m4a
+[08-Aug-26 14:20:25 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/DxsDekHDKXo.m4a
+[08-Aug-26 14:20:36 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/A85MhlsZDZs.m4a
+[08-Aug-26 14:20:42 - INFO] - anony: Cache cleanup: removed downloads/y2fgw1Oqz28.m4a
+[08-Aug-26 14:21:19 - INFO] - anony: Cache cleanup: removed downloads/prrmQ4RtMpA.m4a
+[08-Aug-26 14:21:32 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/73P0XInJBDc.m4a
+[08-Aug-26 14:21:47 - INFO] - anony: Cache cleanup: removed downloads/Ube5XhN_lpM.m4a
+[08-Aug-26 14:24:54 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/3-mynTjHZdw.m4a
+[08-Aug-26 14:25:25 - INFO] - anony: Cache cleanup: removed downloads/DxsDekHDKXo.m4a
+[08-Aug-26 14:25:36 - INFO] - anony: Cache cleanup: removed downloads/A85MhlsZDZs.m4a
+[08-Aug-26 14:26:32 - INFO] - anony: Cache cleanup: removed downloads/73P0XInJBDc.m4a
+[08-Aug-26 14:28:09 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/73P0XInJBDc.m4a
+[08-Aug-26 14:29:54 - INFO] - anony: Cache cleanup: removed downloads/3-mynTjHZdw.m4a
+[08-Aug-26 14:33:09 - INFO] - anony: Cache cleanup: removed downloads/73P0XInJBDc.m4a
+[08-Aug-26 15:08:08 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:08:08 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:08:10 - INFO] - anony: Database connection successful. (0.38s)
+[08-Aug-26 15:08:10 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:09:51 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:09:51 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:09:52 - INFO] - anony: Database connection successful. (0.20s)
+[08-Aug-26 15:09:52 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:09:52 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 15:09:55 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 15:09:55 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 15:09:55 - INFO] - anony: Loaded 24 modules.
+[08-Aug-26 15:09:55 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 15:21:10 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:21:10 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:21:17 - INFO] - anony: Stopping...
+[08-Aug-26 15:21:19 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:21:19 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:21:20 - INFO] - anony: Database connection successful. (0.46s)
+[08-Aug-26 15:21:20 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:21:21 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 15:21:23 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 15:21:23 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 15:21:23 - INFO] - anony: Loaded 25 modules.
+[08-Aug-26 15:21:23 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 15:49:12 - INFO] - anony: Stopping...
+[08-Aug-26 15:49:21 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:49:22 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:49:22 - INFO] - anony: Database connection successful. (0.23s)
+[08-Aug-26 15:49:22 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:49:23 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 15:49:26 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 15:49:26 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 15:49:26 - INFO] - anony: Loaded 25 modules.
+[08-Aug-26 15:49:26 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 15:51:53 - INFO] - anony: Stopping...
+[08-Aug-26 15:51:54 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:51:54 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:51:55 - INFO] - anony: Database connection successful. (0.18s)
+[08-Aug-26 15:51:55 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:51:56 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 15:51:57 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 15:51:58 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 15:51:58 - INFO] - anony: Loaded 25 modules.
+[08-Aug-26 15:51:58 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 15:54:05 - INFO] - anony: Stopping...
+[08-Aug-26 15:54:10 - INFO] - anony: Cache directories updated.
+[08-Aug-26 15:54:10 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[08-Aug-26 15:54:11 - INFO] - anony: Database connection successful. (0.23s)
+[08-Aug-26 15:54:11 - INFO] - anony: Database cache loaded.
+[08-Aug-26 15:54:12 - INFO] - anony: Bot started as @chillGenAI_Bot
+[08-Aug-26 15:54:14 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[08-Aug-26 15:54:14 - INFO] - anony: PyTgCalls client(s) started.
+[08-Aug-26 15:54:14 - INFO] - anony: Loaded 25 modules.
+[08-Aug-26 15:54:14 - INFO] - anony: Loaded 2 sudo users.
+[08-Aug-26 16:10:39 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/rfTgO9rpqck.m4a
+[08-Aug-26 16:15:39 - INFO] - anony: Cache cleanup: removed downloads/rfTgO9rpqck.m4a
+[08-Aug-26 16:19:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/hT_nvWreIhg.m4a
+[08-Aug-26 16:20:19 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/o-zOcpp9JAA.m4a
+[08-Aug-26 16:24:04 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/TmRgK-pXH9c.m4a
+[08-Aug-26 16:24:25 - INFO] - anony: Cache cleanup: removed downloads/hT_nvWreIhg.m4a
+[08-Aug-26 16:25:19 - INFO] - anony: Cache cleanup: removed downloads/o-zOcpp9JAA.m4a
+[08-Aug-26 16:29:04 - INFO] - anony: Cache cleanup: removed downloads/TmRgK-pXH9c.m4a
+[09-Aug-26 01:42:10 - INFO] - anony: Cache directories updated.
+[09-Aug-26 01:42:11 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 01:42:13 - INFO] - anony: Database connection successful. (0.33s)
+[09-Aug-26 01:42:13 - INFO] - anony: Database cache loaded.
+[09-Aug-26 01:42:13 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 01:42:15 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 01:42:16 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 01:42:16 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 01:42:16 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 01:51:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/kq19ZFnmze8.m4a
+[09-Aug-26 01:56:24 - INFO] - anony: Cache cleanup: removed downloads/kq19ZFnmze8.m4a
+[09-Aug-26 01:58:47 - INFO] - anony: Stopping...
+[09-Aug-26 01:58:51 - INFO] - anony: Cache directories updated.
+[09-Aug-26 01:58:51 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 01:58:52 - INFO] - anony: Database connection successful. (0.40s)
+[09-Aug-26 01:58:52 - INFO] - anony: Database cache loaded.
+[09-Aug-26 01:58:53 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 01:58:55 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 01:58:55 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 01:58:55 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 01:58:55 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 02:16:49 - INFO] - anony: Stopping...
+[09-Aug-26 02:16:52 - INFO] - anony: Cache directories updated.
+[09-Aug-26 02:16:52 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 02:16:54 - INFO] - anony: Database connection successful. (0.39s)
+[09-Aug-26 02:16:54 - INFO] - anony: Database cache loaded.
+[09-Aug-26 02:16:54 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 02:16:56 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 02:16:57 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 02:16:57 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 02:16:57 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 03:39:49 - INFO] - anony: Stopping...
+[09-Aug-26 03:39:53 - INFO] - anony: Cache directories updated.
+[09-Aug-26 03:39:53 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 03:39:54 - INFO] - anony: Database connection successful. (0.22s)
+[09-Aug-26 03:39:54 - INFO] - anony: Database cache loaded.
+[09-Aug-26 03:39:55 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 03:39:58 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 03:39:58 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 03:39:58 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 03:39:58 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 03:47:30 - INFO] - anony: Stopping...
+[09-Aug-26 03:47:34 - INFO] - anony: Cache directories updated.
+[09-Aug-26 03:47:34 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 03:47:36 - INFO] - anony: Database connection successful. (0.47s)
+[09-Aug-26 03:47:36 - INFO] - anony: Database cache loaded.
+[09-Aug-26 03:47:36 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 03:47:38 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 03:47:39 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 03:47:39 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 03:47:39 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 04:28:44 - INFO] - anony: Cache directories updated.
+[09-Aug-26 04:28:45 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 04:28:46 - INFO] - anony: Database connection successful. (0.39s)
+[09-Aug-26 04:28:46 - INFO] - anony: Database cache loaded.
+[09-Aug-26 04:28:47 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 04:28:49 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 04:28:49 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 04:28:49 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 04:28:49 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 04:29:29 - ERROR] - pyrogram.connection.transport.tcp.tcp: Send failed: ConnectionResetError [Errno 104] Connection reset by peer
+[09-Aug-26 04:47:51 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/8vKDo6Xu.m4a
+[09-Aug-26 04:52:41 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/BLroOiPtlXQ.m4a
+[09-Aug-26 04:52:51 - INFO] - anony: Cache cleanup: removed downloads/8vKDo6Xu.m4a
+[09-Aug-26 04:57:41 - INFO] - anony: Cache cleanup: removed downloads/BLroOiPtlXQ.m4a
+[09-Aug-26 10:45:58 - INFO] - anony: Cache directories updated.
+[09-Aug-26 10:45:58 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 10:46:00 - INFO] - anony: Database connection successful. (0.41s)
+[09-Aug-26 10:46:00 - INFO] - anony: Database cache loaded.
+[09-Aug-26 10:46:01 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 10:46:03 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 10:46:03 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 10:46:04 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 10:46:04 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 10:55:27 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/7OGSeZP0sc8.m4a
+[09-Aug-26 11:00:27 - INFO] - anony: Cache cleanup: removed downloads/7OGSeZP0sc8.m4a
+[09-Aug-26 11:16:28 - INFO] - anony: Cache directories updated.
+[09-Aug-26 11:16:29 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 11:16:30 - INFO] - anony: Database connection successful. (0.38s)
+[09-Aug-26 11:16:30 - INFO] - anony: Database cache loaded.
+[09-Aug-26 11:16:31 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 11:16:33 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 11:16:33 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 11:16:33 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 11:16:33 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 11:45:16 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/UPJYO3v0.m4a
+[09-Aug-26 11:50:16 - INFO] - anony: Cache cleanup: removed downloads/UPJYO3v0.m4a
+[09-Aug-26 12:06:27 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/N39UtM_6RfY.m4a
+[09-Aug-26 13:08:31 - INFO] - anony: Cache directories updated.
+[09-Aug-26 13:08:31 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 13:08:32 - INFO] - anony: Database connection successful. (0.24s)
+[09-Aug-26 13:08:33 - INFO] - anony: Database cache loaded.
+[09-Aug-26 13:08:33 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 13:08:35 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 13:08:36 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 13:08:36 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 13:08:36 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 14:14:17 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ziABaAUq5Ck.m4a
+[09-Aug-26 14:17:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/GrAchTdepsU.m4a
+[09-Aug-26 14:18:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/1wq47tabJh0.m4a
+[09-Aug-26 14:19:17 - INFO] - anony: Cache cleanup: removed downloads/ziABaAUq5Ck.m4a
+[09-Aug-26 14:22:31 - INFO] - anony: Cache cleanup: removed downloads/GrAchTdepsU.m4a
+[09-Aug-26 14:23:00 - INFO] - anony: Cache cleanup: removed downloads/1wq47tabJh0.m4a
+[09-Aug-26 14:26:46 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/GrAchTdepsU.m4a
+[09-Aug-26 14:27:00 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/73P0XInJBDc.m4a
+[09-Aug-26 14:27:19 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/1wq47tabJh0.m4a
+[09-Aug-26 14:30:50 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/p6L3_Q2swhM.m4a
+[09-Aug-26 14:31:46 - INFO] - anony: Cache cleanup: removed downloads/GrAchTdepsU.m4a
+[09-Aug-26 14:32:00 - INFO] - anony: Cache cleanup: removed downloads/73P0XInJBDc.m4a
+[09-Aug-26 14:32:19 - INFO] - anony: Cache cleanup: removed downloads/1wq47tabJh0.m4a
+[09-Aug-26 14:35:51 - INFO] - anony: Cache cleanup: removed downloads/p6L3_Q2swhM.m4a
+[09-Aug-26 14:41:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/cbkgO7QoUqM.m4a
+[09-Aug-26 14:46:24 - INFO] - anony: Cache cleanup: removed downloads/cbkgO7QoUqM.m4a
+[09-Aug-26 14:52:25 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/mRD0-GxqHVo.m4a
+[09-Aug-26 14:54:57 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/cbkgO7QoUqM.m4a
+[09-Aug-26 14:56:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/1wq47tabJh0.m4a
+[09-Aug-26 14:57:25 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.m4a
+[09-Aug-26 14:59:57 - INFO] - anony: Cache cleanup: removed downloads/cbkgO7QoUqM.m4a
+[09-Aug-26 15:01:24 - INFO] - anony: Cache cleanup: removed downloads/1wq47tabJh0.m4a
+[09-Aug-26 15:03:02 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/1wq47tabJh0.m4a
+[09-Aug-26 15:05:25 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/9NY3WNDGtA8.m4a
+[09-Aug-26 15:08:03 - INFO] - anony: Cache cleanup: removed downloads/1wq47tabJh0.m4a
+[09-Aug-26 15:10:25 - INFO] - anony: Cache cleanup: removed downloads/9NY3WNDGtA8.m4a
+[09-Aug-26 15:27:19 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/wEWF2xh5E8s.m4a
+[09-Aug-26 15:32:20 - INFO] - anony: Cache cleanup: removed downloads/wEWF2xh5E8s.m4a
+[09-Aug-26 15:45:21 - INFO] - anony: Cache directories updated.
+[09-Aug-26 15:45:21 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 15:45:23 - INFO] - anony: Database connection successful. (0.38s)
+[09-Aug-26 15:45:23 - INFO] - anony: Database cache loaded.
+[09-Aug-26 15:45:24 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 15:45:26 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 15:45:26 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 15:45:26 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 15:45:26 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 16:15:03 - INFO] - anony: Stopping...
+[09-Aug-26 16:15:15 - INFO] - anony: Cache directories updated.
+[09-Aug-26 16:15:15 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 16:15:16 - INFO] - anony: Database connection successful. (0.53s)
+[09-Aug-26 16:15:16 - INFO] - anony: Database cache loaded.
+[09-Aug-26 16:15:17 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 16:15:19 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 16:15:20 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 16:15:20 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 16:15:20 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 16:17:12 - INFO] - anony: Stopping...
+[09-Aug-26 16:17:59 - INFO] - anony: Cache directories updated.
+[09-Aug-26 16:17:59 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 16:18:00 - INFO] - anony: Database connection successful. (0.47s)
+[09-Aug-26 16:18:00 - INFO] - anony: Database cache loaded.
+[09-Aug-26 16:18:01 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 16:18:03 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 16:18:03 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 16:18:03 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 16:18:03 - INFO] - anony: Loaded 2 sudo users.
+[09-Aug-26 16:20:13 - INFO] - anony: Stopping...
+[09-Aug-26 16:20:17 - INFO] - anony: Cache directories updated.
+[09-Aug-26 16:20:17 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[09-Aug-26 16:20:18 - INFO] - anony: Database connection successful. (0.34s)
+[09-Aug-26 16:20:18 - INFO] - anony: Database cache loaded.
+[09-Aug-26 16:20:19 - INFO] - anony: Bot started as @chillGenAI_Bot
+[09-Aug-26 16:20:21 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[09-Aug-26 16:20:21 - INFO] - anony: PyTgCalls client(s) started.
+[09-Aug-26 16:20:21 - INFO] - anony: Loaded 25 modules.
+[09-Aug-26 16:20:21 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 01:11:37 - INFO] - anony: Cache directories updated.
+[10-Aug-26 01:11:38 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 01:11:39 - INFO] - anony: Database connection successful. (0.38s)
+[10-Aug-26 01:11:39 - INFO] - anony: Database cache loaded.
+[10-Aug-26 01:11:40 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 01:11:42 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 01:11:42 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 01:11:43 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 01:11:43 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 01:18:56 - INFO] - anony: Stopping...
+[10-Aug-26 01:19:08 - INFO] - anony: Cache directories updated.
+[10-Aug-26 01:19:08 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 01:19:09 - INFO] - anony: Database connection successful. (0.45s)
+[10-Aug-26 01:19:09 - INFO] - anony: Database cache loaded.
+[10-Aug-26 01:19:10 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 01:19:12 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 01:19:12 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 01:19:12 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 01:19:12 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 01:23:14 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/TmRgK-pXH9c.m4a
+[10-Aug-26 01:28:14 - INFO] - anony: Cache cleanup: removed downloads/TmRgK-pXH9c.m4a
+[10-Aug-26 08:47:50 - INFO] - anony: Cache directories updated.
+[10-Aug-26 08:47:51 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 08:47:53 - INFO] - anony: Database connection successful. (0.44s)
+[10-Aug-26 08:47:53 - INFO] - anony: Database cache loaded.
+[10-Aug-26 08:47:54 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 08:47:56 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 08:47:56 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 08:47:56 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 08:47:56 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 12:49:59 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/rBKTTfLimp0.m4a
+[10-Aug-26 12:54:59 - INFO] - anony: Cache cleanup: removed downloads/rBKTTfLimp0.m4a
+[10-Aug-26 12:55:24 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/U2QNhsAgIIE.m4a
+[10-Aug-26 13:00:24 - INFO] - anony: Cache cleanup: removed downloads/U2QNhsAgIIE.m4a
+[10-Aug-26 13:00:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/_9geEbZIAJM.m4a
+[10-Aug-26 13:04:28 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/kp-Bqr1Gtyw.m4a
+[10-Aug-26 13:05:31 - INFO] - anony: Cache cleanup: removed downloads/_9geEbZIAJM.m4a
+[10-Aug-26 13:09:28 - INFO] - anony: Cache cleanup: removed downloads/kp-Bqr1Gtyw.m4a
+[10-Aug-26 13:25:38 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/cbkgO7QoUqM.m4a
+[10-Aug-26 13:28:22 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/ziABaAUq5Ck.m4a
+[10-Aug-26 13:30:38 - INFO] - anony: Cache cleanup: removed downloads/cbkgO7QoUqM.m4a
+[10-Aug-26 13:33:22 - INFO] - anony: Cache cleanup: removed downloads/ziABaAUq5Ck.m4a
+[10-Aug-26 13:35:41 - INFO] - anony: Cache directories updated.
+[10-Aug-26 13:35:42 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 13:35:43 - INFO] - anony: Database connection successful. (0.40s)
+[10-Aug-26 13:35:43 - INFO] - anony: Database cache loaded.
+[10-Aug-26 13:35:44 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 13:35:46 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 13:35:46 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 13:35:46 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 13:35:46 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 13:56:00 - INFO] - anony: Cache directories updated.
+[10-Aug-26 13:56:00 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 13:56:01 - INFO] - anony: Database connection successful. (0.23s)
+[10-Aug-26 13:56:01 - INFO] - anony: Database cache loaded.
+[10-Aug-26 13:56:02 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 13:56:04 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 13:56:04 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 13:56:05 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 13:56:05 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 15:05:43 - INFO] - anony: Cache directories updated.
+[10-Aug-26 15:05:44 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 15:05:45 - INFO] - anony: Database connection successful. (0.33s)
+[10-Aug-26 15:05:45 - INFO] - anony: Database cache loaded.
+[10-Aug-26 15:05:46 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 15:05:48 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 15:05:48 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 15:05:48 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 15:05:48 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 15:40:27 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/lp-EO5I60KA.m4a
+[10-Aug-26 15:45:27 - INFO] - anony: Cache cleanup: removed downloads/lp-EO5I60KA.m4a
+[10-Aug-26 16:20:00 - INFO] - anony: Cache directories updated.
+[10-Aug-26 16:20:01 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[10-Aug-26 16:20:02 - INFO] - anony: Database connection successful. (0.41s)
+[10-Aug-26 16:20:02 - INFO] - anony: Database cache loaded.
+[10-Aug-26 16:20:03 - INFO] - anony: Bot started as @chillGenAI_Bot
+[10-Aug-26 16:20:05 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[10-Aug-26 16:20:05 - INFO] - anony: PyTgCalls client(s) started.
+[10-Aug-26 16:20:06 - INFO] - anony: Loaded 25 modules.
+[10-Aug-26 16:20:06 - INFO] - anony: Loaded 2 sudo users.
+[10-Aug-26 16:38:14 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/6hWj1-c2JgY.m4a
+[10-Aug-26 16:38:25 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/o-zOcpp9JAA.m4a
+[10-Aug-26 16:40:50 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/K0ibsAQTyRQ.m4a
+[10-Aug-26 16:43:14 - INFO] - anony: Cache cleanup: removed downloads/6hWj1-c2JgY.m4a
+[10-Aug-26 16:43:25 - INFO] - anony: Cache cleanup: removed downloads/o-zOcpp9JAA.m4a
+[10-Aug-26 16:44:31 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/TmRgK-pXH9c.m4a
+[10-Aug-26 16:44:35 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/k4yXQkG2s1E.m4a
+[10-Aug-26 16:45:50 - INFO] - anony: Cache cleanup: removed downloads/K0ibsAQTyRQ.m4a
+[10-Aug-26 16:48:03 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/tqzFgoe48Go.m4a
+[10-Aug-26 16:49:31 - INFO] - anony: Cache cleanup: removed downloads/TmRgK-pXH9c.m4a
+[10-Aug-26 16:49:35 - INFO] - anony: Cache cleanup: removed downloads/k4yXQkG2s1E.m4a
+[10-Aug-26 16:53:03 - INFO] - anony: Cache cleanup: removed downloads/tqzFgoe48Go.m4a
+[10-Aug-26 17:42:04 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/mRD0-GxqHVo.m4a
+[10-Aug-26 17:44:04 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/wEWF2xh5E8s.m4a
+[10-Aug-26 17:47:04 - INFO] - anony: Cache cleanup: removed downloads/mRD0-GxqHVo.m4a
+[10-Aug-26 17:47:27 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/TmRgK-pXH9c.mp4
+[10-Aug-26 17:49:05 - INFO] - anony: Cache cleanup: removed downloads/wEWF2xh5E8s.m4a
+[10-Aug-26 17:50:15 - INFO] - anony: Downloaded via ArcAPI [arc]: downloads/dvy01-W9lN4.m4a
+[10-Aug-26 17:52:27 - INFO] - anony: Cache cleanup: removed downloads/TmRgK-pXH9c.mp4
+[10-Aug-26 17:55:15 - INFO] - anony: Cache cleanup: removed downloads/dvy01-W9lN4.m4a
+[11-Aug-26 01:58:38 - INFO] - anony: Cache directories updated.
+[11-Aug-26 01:58:39 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 01:58:41 - INFO] - anony: Database connection successful. (0.41s)
+[11-Aug-26 01:58:41 - INFO] - anony: Database cache loaded.
+[11-Aug-26 01:58:41 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 01:58:44 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 01:58:44 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 01:58:44 - INFO] - anony: Loaded 25 modules.
+[11-Aug-26 01:58:44 - INFO] - anony: Loaded 2 sudo users.
+[11-Aug-26 08:46:11 - INFO] - anony: Cache directories updated.
+[11-Aug-26 08:46:12 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 08:46:14 - INFO] - anony: Database connection successful. (0.28s)
+[11-Aug-26 08:46:14 - INFO] - anony: Database cache loaded.
+[11-Aug-26 08:46:15 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 08:46:17 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 08:46:18 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 08:46:18 - INFO] - anony: Loaded 25 modules.
+[11-Aug-26 08:46:18 - INFO] - anony: Loaded 2 sudo users.
+[11-Aug-26 09:12:04 - INFO] - anony: Cache directories updated.
+[11-Aug-26 09:12:05 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 09:12:07 - INFO] - anony: Database connection successful. (0.42s)
+[11-Aug-26 09:12:07 - INFO] - anony: Database cache loaded.
+[11-Aug-26 09:12:08 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 09:12:10 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 09:12:10 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 09:12:10 - INFO] - anony: Loaded 25 modules.
+[11-Aug-26 09:12:10 - INFO] - anony: Loaded 2 sudo users.
+[11-Aug-26 09:39:10 - INFO] - anony: Cache directories updated.
+[11-Aug-26 09:39:11 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 09:39:13 - INFO] - anony: Database connection successful. (0.40s)
+[11-Aug-26 09:39:13 - INFO] - anony: Database cache loaded.
+[11-Aug-26 09:39:14 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 09:39:16 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 09:39:16 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 09:39:16 - INFO] - anony: Loaded 25 modules.
+[11-Aug-26 09:39:16 - INFO] - anony: Loaded 2 sudo users.
+[11-Aug-26 10:16:29 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/PbItKDDD.m4a
+[11-Aug-26 10:19:44 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/icYRHDKL.m4a
+[11-Aug-26 10:21:29 - INFO] - anony: Cache cleanup: removed downloads/PbItKDDD.m4a
+[11-Aug-26 10:22:11 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/RYlT0caP.m4a
+[11-Aug-26 10:24:44 - INFO] - anony: Cache cleanup: removed downloads/icYRHDKL.m4a
+[11-Aug-26 10:27:11 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/mzPXeoNe.m4a
+[11-Aug-26 10:27:11 - INFO] - anony: Cache cleanup: removed downloads/RYlT0caP.m4a
+[11-Aug-26 10:32:11 - INFO] - anony: Cache cleanup: removed downloads/mzPXeoNe.m4a
+[11-Aug-26 10:33:29 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/yToMT6n6.m4a
+[11-Aug-26 10:38:29 - INFO] - anony: Cache cleanup: removed downloads/yToMT6n6.m4a
+[11-Aug-26 10:42:51 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/gZdG2uM5.m4a
+[11-Aug-26 10:47:52 - INFO] - anony: Cache cleanup: removed downloads/gZdG2uM5.m4a
+[11-Aug-26 10:48:49 - INFO] - anony: Downloaded via JioSaavn [auto]: downloads/ZBZG6UW_.m4a
+[11-Aug-26 10:53:49 - INFO] - anony: Cache cleanup: removed downloads/ZBZG6UW_.m4a
+[11-Aug-26 14:18:35 - INFO] - anony: Cache directories updated.
+[11-Aug-26 14:18:35 - INFO] - anony: Loaded languages: ar, de, es, fr, hi, ja, my, pa, pt, ru, tr, zh, en
+[11-Aug-26 14:18:37 - INFO] - anony: Database connection successful. (0.40s)
+[11-Aug-26 14:18:37 - INFO] - anony: Database cache loaded.
+[11-Aug-26 14:18:38 - INFO] - anony: Bot started as @chillGenAI_Bot
+[11-Aug-26 14:18:40 - INFO] - anony: Assistant 1 started as @Neko_Hina
+[11-Aug-26 14:18:41 - INFO] - anony: PyTgCalls client(s) started.
+[11-Aug-26 14:18:41 - INFO] - anony: Loaded 25 modules.
+[11-Aug-26 14:18:41 - INFO] - anony: Loaded 2 sudo users.

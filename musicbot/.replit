@@ -1,0 +1,71 @@
+modules = ["bash", "nodejs-20", "python-3.10"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "JioSaavn Sidecar"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export PATH=$HOME/.deno/bin:$PATH && uv run --python 3.10 python3 -m anony"
+
+[[workflows.workflow]]
+name = "JioSaavn Sidecar"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd jiosaavn-sidecar-clean/artifacts/api-server && PORT=8080 node --enable-source-maps ./dist/index.mjs"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["uv", "run", "python3", "-m", "anony"]
+
+[userenv]
+
+[userenv.shared]
+JIOSAVAN_API_URL = "http://127.0.0.1:8080"
+ARC_API_URL = "https://api.arcmusic.fun"
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 8082
+externalPort = 3001
+
+[[ports]]
+localPort = 23984
+externalPort = 3000

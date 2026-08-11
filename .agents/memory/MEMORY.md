@@ -1,0 +1,2 @@
+- [Migrated zip projects need runtimes reinstalled](migrated-zip-runtime-setup.md) — pnpm/node/uv absent after zip import even if config files reference them; install modules before trusting workflow failures.
+- [musicbot session credentials](musicbot-session-credentials.md) — anony.session files were git-tracked; treat any *.session file as a leaked credential needing rotation + gitignore.

@@ -1,0 +1,59 @@
+Use this exact message — copy/paste it into the Replit agent/support chat or the Repl console request. It asks them to (A) tell you where the JioSaavn sidecar is hosted and (B) run a small set of HTTP tests against the sidecar endpoints and paste the raw outputs.
+
+Paste exactly:
+
+---
+Hello — please help me verify the JioSaavn sidecar HTTP endpoints for my ArcMusic bot.
+
+1) Tell me where the sidecar is hosted for this Repl (respond with one of):
+   - "local" (listening on 127.0.0.1:PORT and started by the Repl process), OR
+   - the public Repl URL (the *.repl.co URL), OR
+   - another host/URL you deployed.
+
+2) Run these exact HTTP tests and paste the full raw outputs (including HTTP status line and response body) back here.
+
+Replace <BASE> with the correct base URL you reported in step 1 (examples: http://127.0.0.1:8080 or https://my-repl-username.repl.co).
+
+A — /search endpoint tests
+a) Valid query:
+curl -i "<BASE>/search?q=heeriye"
+
+b) Missing query (expect 400):
+curl -i "<BASE>/search"
+
+B — /download endpoint tests
+a) If /search returned a track object with an id (copy the id from the search output) run:
+curl -i "<BASE>/download?id=<ID_FROM_SEARCH>"
+
+b) If /search returned no id, test download-by-query:
+curl -i "<BASE>/download?q=heeriye"
+
+c) Missing id/query (expect 400):
+curl -i "<BASE>/download"
+
+3) For each request, please copy & paste:
+   - the HTTP status line (e.g., HTTP/1.1 200 OK)
+   - response headers (especially Content-Type)
+   - and the full JSON response body
+
+4) Expected shapes (for reference)
+- /search?q=<query> success → 200 JSON:
+  { "tracks": [ { "id":"...", "title":"...", "artists":"...", "duration":123, "thumbnail":"...", "url":"..." }, ... ] }
+
+- /search without q → 400 JSON:
+  { "error":"missing query" }
+
+- /download?id=<id> success → 200 JSON:
+  { "id":"<id>", "url":"https://...mp3" }
+
+- /download missing id/q → 400 JSON:
+  { "error":"missing id or q" }
+
+Important: the bot expects a direct HTTP(S) audio URL in "url" (or the sidecar may proxy the stream and return a proxy URL). If the sidecar returns a different JSON shape, paste it exactly so I can adapt the adapter.
+
+If any curl command fails (connection refused, timeout, DNS), paste the exact error text (curl's output). If the service is on localhost and not started, please start it before running tests.
+
+Thanks — paste the outputs here and I’ll confirm whether the sidecar matches the contract and give the next exact change to the bot repo if needed.
+---
+
+After the agent returns the outputs, paste them here and I’ll parse them and tell you exactly whether the sidecar matches the expected contract or what to change.
