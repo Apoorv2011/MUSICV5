@@ -86,9 +86,50 @@ class Inline:
                 [self.ikb(text="🎨 ᴅᴇsɪɢɴ", callback_data=f"design pick {chat_id}")]
             )
             keyboard.append(
+                [
+                    self.ikb(
+                        text="💡 sᴜɢɢᴇsᴛ",
+                        callback_data=f"suggest {chat_id}",
+                    ),
+                    self.ikb(
+                        text="💗 ғᴀᴠ",
+                        callback_data=f"fav {chat_id}",
+                    ),
+                ]
+            )
+            keyboard.append(
                 [self.ikb(text="╳  ᴄʟᴏsᴇ  ╳", callback_data=f"controls close {chat_id}")]
             )
         return self.ikm(keyboard)
+
+    def suggestions_markup(
+        self, chat_id: int, songs: list[dict]
+    ) -> types.InlineKeyboardMarkup:
+        rows = [
+            [
+                self.ikb(
+                    text=f"♪ {song['label']}",
+                    callback_data=f"suggest_play {chat_id} {song['video_id']}",
+                )
+            ]
+            for song in songs
+        ]
+        rows.append(
+            [self.ikb(text="↩ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀʏᴇʀ", callback_data=f"suggest_back {chat_id}")]
+        )
+        return self.ikm(rows)
+
+    def favorites_markup(self, songs: list[dict]) -> types.InlineKeyboardMarkup:
+        rows = [
+            [
+                self.ikb(
+                    text=f"{index + 1}. ♪ {song.get('title', 'Unknown')[:42]}",
+                    callback_data=f"favplay {index}",
+                )
+            ]
+            for index, song in enumerate(songs)
+        ]
+        return self.ikm(rows)
 
     def help_markup(
         self, _lang: dict, back: bool = False

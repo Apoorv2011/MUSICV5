@@ -43,6 +43,7 @@ class MongoDB:
 
         self.users = []
         self.usersdb = self.db.users
+        self.favoritesdb = self.db.favorites
 
     async def connect(self) -> None:
         """Check if we can connect to the database.
@@ -311,6 +312,31 @@ class MongoDB:
         if not self.users:
             self.users.extend([user["_id"] async for user in self.usersdb.find()])
         return self.users
+
+    # FAVORITES
+    async def get_favorites(self, user_id: int) -> list[dict]:
+        doc = await self.favoritesdb.find_one({"_id": user_id})
+        return doc.get("songs", []) if doc else []
+
+    async def add_favorite(self, user_id: int, song: dict) -> bool:
+        result = await self.favoritesdb.update_one(
+            {"_id": user_id},
+            {"$addToSet": {"songs": song}},
+            upsert=True,
+        )
+        return result.modified_count > 0 or result.upserted_id is not None
+
+    async def remove_favorite(self, user_id: int, index: int) -> bool:
+        songs = await self.get_favorites(user_id)
+        if index < 0 or index >= len(songs):
+            return False
+        songs.pop(index)
+        await self.favoritesdb.update_one(
+            {"_id": user_id},
+            {"$set": {"songs": songs}},
+            upsert=True,
+        )
+        return True
 
 
     async def migrate_coll(self) -> None:

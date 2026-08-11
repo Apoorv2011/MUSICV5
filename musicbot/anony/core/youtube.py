@@ -248,6 +248,12 @@ class YouTube:
             return _make_track_from_saavn(saavn, query, m_id)
         return await _yt_search_meta(query, m_id, video)
 
+    async def search_youtube(
+        self, query: str, m_id: int, video: bool = False
+    ) -> Track | None:
+        """Search YouTube metadata directly, bypassing the music backend."""
+        return await _yt_search_meta(query, m_id, video)
+
     async def playlist(self, limit: int, user: str, url: str, video: bool) -> list[Track | None]:
         tracks = []
         try:

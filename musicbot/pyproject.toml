@@ -15,4 +15,5 @@ dependencies = [
     "pymongo>=4.16.0",
     "pytgcrypto>=1.2.11",
     "python-dotenv~=1.2.1",
+    "ytmusicapi~=1.12.2",
 ]
