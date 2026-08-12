@@ -3,6 +3,9 @@
 # This file is part of AnonXMusic
 
 
+import os
+import re
+
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
                       RTMPStreamingUnsupported, ConnectionError)
 from pyrogram.errors import (ChatSendMediaForbidden, ChatSendPhotosForbidden,
@@ -17,8 +20,39 @@ from anony.helpers import Media, Track, buttons
 
 
 class TgCall(PyTgCalls):
+    # Matches t.me/<channel>/<msg_id> and t.me/c/<channel_id>/<msg_id>
+    _tg_link_re = re.compile(r"t\.me/(?:c/)?([A-Za-z0-9_]+)/(\d+)")
+
     def __init__(self):
         self.clients = []
+
+    async def _resolve_tg_file(self, file_path: str) -> str | None:
+        """Fetch the Telegram CDN message and download its audio to a temporary
+        file path so PyTgCalls v2 receives a valid string file path."""
+        match = self._tg_link_re.search(file_path)
+        if not match:
+            return None
+
+        channel_raw, msg_id = match.group(1), int(match.group(2))
+
+        # Format numeric private channel IDs (e.g. 1677848376 -> -1001677848376)
+        if channel_raw.isdigit():
+            channel = int(f"-100{channel_raw}")
+        else:
+            channel = channel_raw
+
+        for ub in userbot.clients:
+            ub_client = getattr(ub, "app", ub)
+            try:
+                tg_message = await ub_client.get_messages(channel, msg_id)
+                if tg_message and (tg_message.audio or tg_message.voice or tg_message.video or tg_message.document):
+                    # Download cached Telegram CDN media locally
+                    downloaded_path = await ub_client.download_media(tg_message)
+                    if downloaded_path and os.path.exists(downloaded_path):
+                        return downloaded_path
+            except Exception as e:
+                logger.warning("Failed to resolve Telegram CDN message (%s, %s): %s", channel, msg_id, e)
+        return None
 
     async def pause(self, chat_id: int) -> bool:
         client = await db.get_assistant(chat_id)
@@ -61,8 +95,20 @@ class TgCall(PyTgCalls):
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
             return await self.play_next(chat_id)
 
+        media_path = media.file_path
+
+        # Resolve Telegram channel post links if ArcAPI returns a tg link
+        if "t.me/" in media_path:
+            resolved_path = await self._resolve_tg_file(media_path)
+            if resolved_path:
+                media_path = resolved_path
+            else:
+                logger.error("Could not resolve/download Telegram CDN media link: %s", media_path)
+                await message.edit_text(_lang["error_no_audio"])
+                return await self.play_next(chat_id)
+
         stream = types.MediaStream(
-            media_path=media.file_path,
+            media_path=media_path,
             audio_parameters=types.AudioQuality.HIGH,
             video_parameters=types.VideoQuality.HD_720p,
             audio_flags=types.MediaStream.Flags.REQUIRED,
@@ -73,6 +119,7 @@ class TgCall(PyTgCalls):
             ),
             ffmpeg_parameters=f"-ss {seek_time}" if seek_time > 1 else None,
         )
+
         try:
             await client.play(
                 chat_id=chat_id,
