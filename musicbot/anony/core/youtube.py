@@ -1,6 +1,5 @@
 import os
 import re
-import json
 import asyncio
 import aiohttp
 import threading
@@ -11,14 +10,17 @@ from py_yt import Playlist, VideosSearch
 
 from anony import logger
 from anony.helpers import Track, utils
+from anony.helpers._api import NexGenApi
 from backend_prefs import get_primary
 
 JIOSAVAN_API_URL = os.getenv("JIOSAVAN_API_URL", "").rstrip("/")
-ARC_API_URL = os.getenv("ARC_API_URL", "https://api.arcmusic.fun").rstrip("/")
-ARC_API_KEY = os.getenv("ARC_API_KEY", "")
+# NexGenBots config (used instead of Arc)
+NEXGEN_API_URL = os.getenv("API_URL", "https://pvtz.nexgenbots.xyz").rstrip("/")
+NEXGEN_VIDEO_API_URL = os.getenv("VIDEO_API_URL", "https://api.video.nexgenbots.xyz").rstrip("/")
+NEXGEN_API_KEY = os.getenv("API_KEY", "")
 
 
-# ── JioSaavn sidecar ──────────────────────────────────────────────────────────
+# ----------------- JioSaavn sidecar ------------------------------------------------
 
 async def _jiosaavn_search(query: str) -> dict | None:
     if not JIOSAVAN_API_URL:
@@ -61,111 +63,50 @@ async def _jiosaavn_download(song_id: str) -> str | None:
         return None
 
 
-# ── ArcAPI (job-based async) ──────────────────────────────────────────────────
+# ----------------- NexGenBots integration (replaces Arc flow) ----------------------
 
-async def _arc_start_job(
-    query: str, is_video: bool = False
-) -> tuple[str | None, str | None]:
-    """Start an ArcAPI v2 download and return (job_id, direct_url).
+# Shared NexGenApi client (lazy-init)
+_nexgen_client: NexGenApi | None = None
 
-    On a cache hit the API responds instantly with either a raw plain-text
-    URL body or a JSON payload carrying the stream location under "cdn".
-    On a cache miss it queues a background job and returns a job_id, which
-    must be polled via _arc_poll_job.
-    """
-    if not ARC_API_URL or not ARC_API_KEY:
-        return None, None
+
+async def _get_nexgen_client() -> NexGenApi | None:
+    global _nexgen_client
+    if _nexgen_client:
+        return _nexgen_client
+    if not NEXGEN_API_URL or not NEXGEN_API_KEY:
+        logger.warning("NexGen config missing: API_URL or API_KEY not set")
+        return None
+    _nexgen_client = NexGenApi(
+        api_url=NEXGEN_API_URL,
+        api_key=NEXGEN_API_KEY,
+        video_api_url=NEXGEN_VIDEO_API_URL,
+    )
     try:
-        async with aiohttp.ClientSession() as s:
-            async with s.get(
-                f"{ARC_API_URL}/youtube/v2/download",
-                params={
-                    "query": query,
-                    "isVideo": "true" if is_video else "false",
-                    "api_key": ARC_API_KEY,
-                },
-                timeout=aiohttp.ClientTimeout(total=15),
-            ) as r:
-                if r.status != 200:
-                    logger.warning("ArcAPI start job HTTP %s for %s", r.status, query)
-                    return None, None
-
-                raw = (await r.text()).strip()
-                if raw.startswith("http"):
-                    return None, raw
-
-                try:
-                    data = json.loads(raw)
-                except (ValueError, json.JSONDecodeError):
-                    logger.warning(
-                        "ArcAPI start job returned an unparsable body for %s", query
-                    )
-                    return None, None
-
-                result = data.get("result") or {}
-                direct_url = (
-                    result.get("cdn")
-                    or data.get("cdn")
-                    or result.get("url")
-                )
-                if direct_url:
-                    return None, direct_url
-                return data.get("job_id"), None
+        await _nexgen_client.get_session()
     except Exception as e:
-        logger.warning("ArcAPI start job error: %s", e)
-        return None, None
+        logger.warning("Failed to create NexGen session: %s", e)
+        _nexgen_client = None
+    return _nexgen_client
 
 
-async def _arc_poll_job(job_id: str, timeout: int = 60) -> str | None:
-    """Poll /youtube/jobStatus until done → returns the "cdn" stream location."""
-    if not ARC_API_URL or not ARC_API_KEY:
+async def _nexgen_download(video_id: str, is_video: bool = False) -> str | None:
+    """
+    Use NexGenApi to download the media file.
+    Returns local filepath (e.g., downloads/{id}.mp4) or None on failure.
+    """
+    client = await _get_nexgen_client()
+    if not client:
         return None
-    deadline = asyncio.get_event_loop().time() + timeout
-    async with aiohttp.ClientSession() as s:
-        while asyncio.get_event_loop().time() < deadline:
-            try:
-                async with s.get(
-                    f"{ARC_API_URL}/youtube/jobStatus",
-                    params={"job_id": job_id},
-                    timeout=aiohttp.ClientTimeout(total=10),
-                ) as r:
-                    if r.status != 200:
-                        await asyncio.sleep(2)
-                        continue
-
-                    raw = (await r.text()).strip()
-                    try:
-                        data = json.loads(raw)
-                    except (ValueError, json.JSONDecodeError):
-                        await asyncio.sleep(2)
-                        continue
-
-                    job = data.get("job", {})
-                    status = job.get("status") or data.get("status")
-                    if status == "done":
-                        result = job.get("result", {})
-                        return result.get("cdn") or result.get("url")
-                    if status in ("failed", "error"):
-                        logger.warning("ArcAPI job %s failed: %s", job_id, data)
-                        return None
-            except Exception as e:
-                logger.warning("ArcAPI poll error: %s", e)
-            await asyncio.sleep(3)
-    logger.warning("ArcAPI job %s timed out after %ss", job_id, timeout)
-    return None
-
-
-async def _arc_download(query: str, is_video: bool = False) -> str | None:
-    """Full Arc flow: return a direct URL or start and poll a job."""
-    job_id, direct_url = await _arc_start_job(query, is_video)
-    if direct_url:
-        return direct_url
-    if not job_id:
+    try:
+        # NexGenApi.download will poll the provider and save file to downloads/
+        result = await client.download(video_id, video=is_video)
+        return result
+    except Exception as e:
+        logger.warning("NexGen download error for %s: %s", video_id, e)
         return None
-    return await _arc_poll_job(job_id)
 
 
-# ── YouTube metadata search (no download) ─────────────────────────────────────
+# ----------------- YouTube metadata search (no download) --------------------------
 
 async def _yt_search_meta(query: str, m_id: int, video: bool) -> Track | None:
     try:
@@ -190,7 +131,7 @@ async def _yt_search_meta(query: str, m_id: int, video: bool) -> Track | None:
     return None
 
 
-# ── helpers ───────────────────────────────────────────────────────────────────
+# ----------------- helpers --------------------------------------------------------
 
 def _make_track_from_saavn(saavn: dict, query: str, m_id: int) -> Track:
     dur_sec = saavn.get("duration") or 0
@@ -231,6 +172,8 @@ async def _download_to_file(url: str, filepath: str) -> str | None:
             async with s.get(url, timeout=aiohttp.ClientTimeout(total=90)) as r:
                 if r.status != 200:
                     return None
+                # Write in synchronous fashion inside async context to avoid mixing aiofiles here,
+                # but this preserves original behavior. If desired, change to aiofiles.
                 with open(filepath, "wb") as f:
                     async for chunk in r.content.iter_chunked(65536):
                         f.write(chunk)
@@ -240,7 +183,7 @@ async def _download_to_file(url: str, filepath: str) -> str | None:
         return None
 
 
-# ── YouTube class (public API) ────────────────────────────────────────────────
+# ----------------- YouTube class (public API) -----------------------------------
 
 class YouTube:
     def __init__(self):
@@ -273,16 +216,13 @@ class YouTube:
             return None
 
         if mode == "arc":
+            # Arc mode now uses NexGenBots under the hood
             return await _yt_search_meta(query, m_id, video)
 
+        # auto: JioSaavn → YouTube metadata (NexGen used at download time)
         saavn = await _jiosaavn_search(query)
         if saavn:
             return _make_track_from_saavn(saavn, query, m_id)
-        return await _yt_search_meta(query, m_id, video)
-
-    async def search_youtube(
-        self, query: str, m_id: int, video: bool = False
-    ) -> Track | None:
         return await _yt_search_meta(query, m_id, video)
 
     async def playlist(self, limit: int, user: str, url: str, video: bool) -> list[Track | None]:
@@ -309,34 +249,50 @@ class YouTube:
             pass
         return tracks
 
-    async def download(self, query: str, video: bool = False) -> str | None:
+    async def download(self, video_id: str, video: bool = False) -> str | None:
+        ext = "mp4" if video else "m4a"
+        filename = f"downloads/{video_id}.{ext}"
+        if Path(filename).exists():
+            return filename
+
         mode = get_primary()
 
         if mode == "jio":
-            url = await _jiosaavn_download(query)
+            url = await _jiosaavn_download(video_id)
             if url:
-                logger.info("Resolved stream via JioSaavn [jio]: %s", query)
-                return url
-            logger.warning("JioSaavn download failed [jio] for: %s", query)
+                result = await _download_to_file(url, filename)
+                if result:
+                    logger.info("Downloaded via JioSaavn [jio]: %s", filename)
+                    _schedule_delete(result)
+                    return result
+            logger.warning("JioSaavn download failed [jio] for: %s", video_id)
             return None
 
         if mode == "arc":
-            stream_url = await _arc_download(query, is_video=video)
-            if stream_url:
-                logger.info("Resolved stream via ArcAPI [arc]: %s", query)
-                return stream_url
-            logger.warning("ArcAPI download failed [arc] for: %s", query)
+            # Use NexGenBots instead of ArcAPI
+            result = await _nexgen_download(video_id, is_video=video)
+            if result:
+                logger.info("Downloaded via NexGenBots [arc->nexgen]: %s", result)
+                _schedule_delete(result)
+                return result
+            logger.warning("NexGen download failed [arc->nexgen] for: %s", video_id)
             return None
 
-        url = await _jiosaavn_download(query)
+        # auto: JioSaavn first → NexGen fallback
+        url = await _jiosaavn_download(video_id)
         if url:
-            logger.info("Resolved stream via JioSaavn [auto]: %s", query)
-            return url
+            result = await _download_to_file(url, filename)
+            if result:
+                logger.info("Downloaded via JioSaavn [auto]: %s", filename)
+                _schedule_delete(result)
+                return result
 
-        stream_url = await _arc_download(query, is_video=video)
-        if stream_url:
-            logger.info("Resolved stream via ArcAPI [auto fallback]: %s", query)
-            return stream_url
+        # fallback to NexGenBots
+        result = await _nexgen_download(video_id, is_video=video)
+        if result:
+            logger.info("Downloaded via NexGenBots [auto fallback]: %s", result)
+            _schedule_delete(result)
+            return result
 
-        logger.warning("All sources failed [auto] for: %s", query)
+        logger.warning("All sources failed [auto] for: %s", video_id)
         return None
