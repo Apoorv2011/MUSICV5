@@ -1,3 +1,6 @@
+# anony/core/calls.py
+from typing import Optional
+
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
                       RTMPStreamingUnsupported, ConnectionError)
 from pyrogram.errors import (ChatSendMediaForbidden, ChatSendPhotosForbidden,
@@ -16,14 +19,10 @@ import re
 
 from anony import (app, config, db, lang, logger,
                    queue, thumb, userbot, yt)
-from anony.helpers import Media, Track, buttons
+from anony.helpers import Media, Track, buttons, utils
 
 
-async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> str | None:
-    """
-    Poll NexGenBots API for a stream/download link without saving locally.
-    Returns the public link (http(s)...) if provider returns status == 'done' and a 'link' field.
-    """
+async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
     api_key = getattr(config, "API_KEY", None)
     if not api_key:
         return None
@@ -48,7 +47,6 @@ async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int
                         link = data.get("link")
                         logger.debug("NexGen status=%s for vid=%s", status, vid_id)
                         if status == "done" and link:
-                            # ensure absolute URL
                             if link.startswith("/"):
                                 link = urljoin(base, link)
                             return link
@@ -60,16 +58,8 @@ async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int
 
 
 def _build_user_mention(media) -> str:
-    """
-    Build a safe HTML mention for the requester.
-    - If media.user contains an <a href="tg://user?id=...">Name</a> or
-      <a href="https://t.me/username">Name</a>, extract and reuse the link safely.
-    - Otherwise prefer an explicit username attribute (media.username), then numeric id attributes.
-    - Fall back to escaped plain name if nothing linkable is found.
-    """
     raw_name = getattr(media, "user", "") or ""
-    username = getattr(media, "username", None)  # explicit username if available
-    # common id fields - adapt if your Track uses different names
+    username = getattr(media, "username", None)
     user_id_candidate = (
         getattr(media, "user_id", None)
         or getattr(media, "user_id_int", None)
@@ -77,9 +67,7 @@ def _build_user_mention(media) -> str:
         or getattr(media, "requester_id", None)
     )
 
-    # If raw_name contains an anchor, try to salvage it (common when upstream already built mention)
     if isinstance(raw_name, str) and "<a" in raw_name:
-        # Try tg://user?id= numeric anchor
         m = re.search(r'<a\s+[^>]*href=["\']?tg://user\?id=(\d+)["\']?[^>]*\s*>(.*?)</a>', raw_name, re.I)
         if m:
             try:
@@ -88,26 +76,20 @@ def _build_user_mention(media) -> str:
                 return f'<a href="tg://user?id={uid}">{display}</a>'
             except Exception:
                 pass
-
-        # Try t.me anchor
         m2 = re.search(r'<a\s+[^>]*href=["\']?(?:https?://)?t\.me/([^"\' >/]+)["\']?[^>]*\s*>(.*?)</a>', raw_name, re.I)
         if m2:
             uname = m2.group(1)
             display = html.escape(m2.group(2) or f"@{uname}")
             return f'<a href="https://t.me/{html.escape(uname)}">{display}</a>'
-
-        # Fallback: strip tags and use visible text
         text_only = re.sub(r'<[^>]+>', '', raw_name).strip()
         if text_only:
             return html.escape(text_only)
 
-    # If explicit username provided, link to t.me/<username>
     if username:
         clean_username = str(username).lstrip("@")
         display = html.escape(str(raw_name) or f"@{clean_username}")
         return f'<a href="https://t.me/{html.escape(clean_username)}">{display}</a>'
 
-    # Numeric id candidates
     uid = None
     if user_id_candidate is not None:
         try:
@@ -119,8 +101,38 @@ def _build_user_mention(media) -> str:
         display = html.escape(str(raw_name) or "Unknown user")
         return f'<a href="tg://user?id={uid}">{display}</a>'
 
-    # fallback to escaped plain name
     return html.escape(str(raw_name) or "Unknown user")
+
+
+def _fmt_time(seconds: int) -> str:
+    try:
+        s = int(seconds)
+    except Exception:
+        return "0:00"
+    m, s = divmod(s, 60)
+    return f"{m}:{s:02d}"
+
+
+def _progress_bar(position: int, duration: int, length: int = 12) -> str:
+    try:
+        pos = max(0, int(position))
+        dur = max(1, int(duration))
+    except Exception:
+        return "▮" + "□" * (length - 1)
+
+    filled = int((pos / dur) * length)
+    if filled >= length:
+        filled = length
+
+    bar = ""
+    for i in range(length):
+        if i < filled - 1:
+            bar += "█"
+        elif i == filled - 1:
+            bar += "◉"
+        else:
+            bar += "▭"
+    return bar
 
 
 class TgCall(PyTgCalls):
@@ -188,44 +200,46 @@ class TgCall(PyTgCalls):
             )
 
             if not seek_time:
-                media.time = 1
+                media.time = getattr(media, "time", 1) or 1
                 await db.add_call(chat_id)
 
-                # Build safe HTML caption (escape user-supplied text)
                 try:
                     url = media.url or ""
                     title = html.escape(media.title or "Unknown title")
-                    duration = html.escape(media.duration or "Unknown duration")
+                    duration_seconds = getattr(media, "duration_sec", None)
+                    if not duration_seconds:
+                        duration_str_raw = getattr(media, "duration", "") or ""
+                        try:
+                            duration_seconds = utils.to_seconds(duration_str_raw) if duration_str_raw else 0
+                        except Exception:
+                            duration_seconds = 0
+                    duration_text = _fmt_time(duration_seconds)
 
                     user_mention = _build_user_mention(media)
-
                     escaped_url = html.escape(url, quote=True)
 
-                    # HTML template
+                    # Build caption WITHOUT the time_line (progress). Controls area handles progress.
                     text = (
-                        "<b>✦ STARTED STREAMING</b>\n\n"
-                        f"◉ <b>TITLE :</b> <a href=\"{escaped_url}\">{title}</a>\n"
-                        f"◉ <b>DURATION :</b> {duration}\n"
-                        f"◉ <b>BY :</b> {user_mention}\n\n"
-                        f"✦ <b>MADE BY…</b> <a href=\"https://t.me/IsolatedBytes\">@IsolatedBytes</a>"
+                        '<b>❖ 𝛅ᴛᴧʀᴛєᴅ 𝛅ᴛʀєᴧϻɪηɢ</b>\n\n'
+                        f'◉ <b>❍ тɪᴛʟє :</b> <a href="{escaped_url}">{title}</a>\n'
+                        f'◉ <b>❍ ᴅᴜʀᴧᴛɪση:</b> {duration_text}\n'
+                        f'◉ <b>ʙʏ:</b> {user_mention}\n\n'
+                        f'✦ <b>❖ ᴍᴀᴅᴇ ʙʏ...</b> <a href="https://t.me/IsolatedBytes">@IsolatedBytes</a>'
                     )
                 except Exception as e:
-                    logger.warning("Language format error for play_media: %s — template=%r", e, _lang.get("play_media"))
-                    # fallback plain text (still escaped)
-                    title = html.escape(getattr(media, "title", "") or "Unknown title")
-                    duration = html.escape(getattr(media, "duration", "") or "Unknown duration")
-                    user_txt = html.escape(getattr(media, "user", "") or "Unknown user")
-                    url_escaped = html.escape(getattr(media, "url", "") or "")
-                    text = f"{title} — {duration}\nRequested by: {user_txt}\n{url_escaped}"
+                    logger.warning("Language format error for play_media: %s — template fallback", e)
+                    title_fb = html.escape(getattr(media, "title", "") or "Unknown title")
+                    dur_fb_raw = getattr(media, "duration", "") or ""
+                    dur_fb = _fmt_time(utils.to_seconds(dur_fb_raw) if dur_fb_raw else 0)
+                    user_fb = html.escape(getattr(media, "user", "") or "Unknown user")
+                    url_fb = html.escape(getattr(media, "url", "") or "")
+                    text = f"{title_fb} — {dur_fb}\nRequested by: {user_fb}\n{url_fb}"
 
                 keyboard = buttons.controls(chat_id)
                 _reveal = getattr(config, "THUMBNAIL_REVEAL", False)
 
                 try:
                     if _thumb:
-                        # Two-step approach ensures caption is parsed correctly across pyrogram versions:
-                        # 1) edit_media to set the new photo (no parse_mode here)
-                        # 2) edit_message_caption to set caption with ParseMode.HTML
                         try:
                             await message.edit_media(
                                 media=InputMediaPhoto(
@@ -235,11 +249,9 @@ class TgCall(PyTgCalls):
                                 reply_markup=keyboard,
                             )
                         except (MessageIdInvalid, ChatSendMediaForbidden, ChatSendPhotosForbidden) as e:
-                            # If editing media fails, fall back to sending a new photo below
                             logger.debug("edit_media failed or not allowed: %s", e)
                             raise
 
-                        # Now explicitly set caption using edit_message_caption which accepts parse_mode reliably
                         try:
                             await app.edit_message_caption(
                                 chat_id=chat_id,
@@ -249,7 +261,6 @@ class TgCall(PyTgCalls):
                                 reply_markup=keyboard,
                             )
                         except Exception as e:
-                            # If caption edit fails for any reason, fallback to sending a new photo message
                             logger.debug("edit_message_caption failed: %s", e)
                             sent = await app.send_photo(
                                 chat_id=chat_id,
@@ -261,10 +272,8 @@ class TgCall(PyTgCalls):
                             )
                             media.message_id = sent.id
                     else:
-                        # No thumbnail: edit text directly with ParseMode enum
                         await message.edit_text(text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
                 except (ChatSendMediaForbidden, ChatSendPhotosForbidden, MessageIdInvalid):
-                    # Fallback: send a fresh message (covers cases where edits are forbidden)
                     if _thumb:
                         sent = await app.send_photo(
                             chat_id=chat_id,
@@ -332,7 +341,6 @@ class TgCall(PyTgCalls):
         _lang = await lang.get_lang(chat_id)
         msg = await app.send_message(chat_id=chat_id, text=_lang["play_next"])
 
-        # Attempt NexGenBots streaming link first (no local download)
         if not media.file_path:
             try:
                 stream_link = await _nexgen_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
@@ -340,10 +348,10 @@ class TgCall(PyTgCalls):
                     media.file_path = stream_link
                     logger.info("Streaming via NexGen link for %s", media.id)
                 else:
-                    media.file_path = await yt.download(media.id, video=getattr(media, "video", False))
+                    media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
             except Exception as e:
                 logger.warning("Error getting NexGen stream link, falling back to download: %s", e)
-                media.file_path = await yt.download(media.id, video=getattr(media, "video", False))
+                media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
 
             if not media.file_path:
                 await self.play_next(chat_id)
