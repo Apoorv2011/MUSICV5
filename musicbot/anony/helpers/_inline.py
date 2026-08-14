@@ -103,7 +103,7 @@ class Inline:
         return self.ikm(keyboard)
 
     def suggestions_markup(
-        self, chat_id: int, songs: list[dict]
+        self, chat_id: int, songs: list[dict], video_id: str | None = None, page: int = 0
     ) -> types.InlineKeyboardMarkup:
         rows = [
             [
@@ -114,9 +114,17 @@ class Inline:
             ]
             for song in songs
         ]
-        rows.append(
-            [self.ikb(text="↩ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀʏᴇʀ", callback_data=f"suggest_back {chat_id}")]
-        )
+        nav_buttons = []
+        if page > 0 and video_id:
+            nav_buttons.append(
+                self.ikb(text="⟨ Prev", callback_data=f"suggest_page {chat_id} {video_id} {page-1}")
+            )
+        nav_buttons.append(self.ikb(text="↩ ʙᴀᴄᴋ", callback_data=f"suggest_back {chat_id}"))
+        if video_id:
+            nav_buttons.append(
+                self.ikb(text="Next ⟩", callback_data=f"suggest_page {chat_id} {video_id} {page+1}")
+            )
+        rows.append(nav_buttons)
         return self.ikm(rows)
 
     def favorites_markup(self, songs: list[dict]) -> types.InlineKeyboardMarkup:
@@ -252,3 +260,4 @@ class Inline:
                 ],
             ]
         )
+
