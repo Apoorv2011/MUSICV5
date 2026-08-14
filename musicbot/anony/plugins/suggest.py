@@ -25,7 +25,7 @@ def _get_video_id(media) -> str | None:
     return None
 
 
-async def _recommend(video_id: str) -> list[dict]:
+async def _recommend(video_id: str, offset: int = 0, limit: int = 10) -> list[dict]:
     global _YT_MUSIC
     if _YT_MUSIC is None:
         from ytmusicapi import YTMusic
@@ -34,9 +34,10 @@ async def _recommend(video_id: str) -> list[dict]:
 
     def fetch():
         result = _YT_MUSIC.get_watch_playlist(videoId=video_id)
+        tracks = result.get("tracks", [])
         songs = []
         seen = {video_id}
-        for item in result.get("tracks", []):
+        for item in tracks[offset : offset + limit]:
             item_id = item.get("videoId")
             if not item_id or item_id in seen:
                 continue
@@ -55,8 +56,6 @@ async def _recommend(video_id: str) -> list[dict]:
                     "artist": artist,
                 }
             )
-            if len(songs) == 10:
-                break
         return songs
 
     return await asyncio.to_thread(fetch)
@@ -165,7 +164,7 @@ async def suggest_list(_, query: types.CallbackQuery):
     await query.answer()
     await query.message.reply_text(
         text,
-        reply_markup=buttons.suggestions_markup(chat_id, songs),
+        reply_markup=buttons.suggestions_markup(chat_id, songs, video_id=video_id, page=0),
     )
 
 
@@ -182,10 +181,8 @@ async def suggest_play(_, query: types.CallbackQuery):
     _, chat_id_text, video_id = query.data.split()
     chat_id = int(chat_id_text)
 
-    track = await yt.search_youtube(
-        f"https://www.youtube.com/watch?v={video_id}",
-        query.message.id,
-    )
+    # Use YouTube.search which accepts (query, message_id, video=True)
+    track = await yt.search(f"https://www.youtube.com/watch?v={video_id}", query.message.id, True)
     if not track:
         return await query.answer("Song metadata could not be loaded.", show_alert=True)
     track.user = query.from_user.mention
@@ -195,6 +192,42 @@ async def suggest_play(_, query: types.CallbackQuery):
         return await query.answer(error, show_alert=True)
     await query.answer("Playing selected song…")
     await query.message.delete()
+
+
+@app.on_callback_query(filters.regex(r"^suggest_page ") & ~app.bl_users)
+async def suggest_page(_, query: types.CallbackQuery):
+    # callback_data: suggest_page <chat_id> <video_id> <page>
+    parts = query.data.split()
+    if len(parts) != 4:
+        return await query.answer()
+    _, chat_id_text, video_id, page_text = parts
+    chat_id = int(chat_id_text)
+    try:
+        page = int(page_text)
+    except Exception:
+        page = 0
+
+    try:
+        songs = await _recommend(video_id, offset=page * 10, limit=10)
+    except Exception:
+        return await query.answer(
+            "YouTube Music recommendations are unavailable right now.",
+            show_alert=True,
+        )
+    if not songs:
+        return await query.answer("No more recommendations found.", show_alert=True)
+
+    text = (
+        "🎵 <b>ʏᴏᴜ ᴍᴀʏ ʟɪᴋᴇ ᴛʜᴇsᴇ ᴛʀᴀᴄᴋs</b>\n\n"
+        "Choose a song below and I'll play it in this voice chat."
+    )
+    await query.answer()
+    # edit the existing suggestions message
+    await query.message.edit_text(
+        text,
+        reply_markup=buttons.suggestions_markup(chat_id, songs, video_id=video_id, page=page),
+        disable_web_page_preview=True,
+    )
 
 
 @app.on_callback_query(filters.regex(r"^fav ") & ~app.bl_users)
