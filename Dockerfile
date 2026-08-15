@@ -1,4 +1,3 @@
-# Use Node base and install python3
 FROM node:20-bullseye
 
 # Install python3 and pip
@@ -8,24 +7,27 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Copy repo
+# Copy repository
 COPY . /app
 
-# Install Python requirements if present
-RUN if [ -f musicbot/requirements.txt ]; then pip3 install -r musicbot/requirements.txt; fi
-
-# Install node dependencies for the sidecar (if package.json exists)
-RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
-      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && npm ci --omit=dev; \
+# Install Python deps (try to install package from pyproject; fallback to requirements.txt if present)
+RUN if [ -f musicbot/pyproject.toml ]; then \
+      pip3 install --no-cache-dir ./musicbot || true; \
+    elif [ -f musicbot/requirements.txt ]; then \
+      pip3 install --no-cache-dir -r musicbot/requirements.txt; \
     fi
 
-# If the Node sidecar needs to be built from TS sources, add build steps here
-# e.g. RUN cd musicbot/jiosaavn-sidecar-clean && npm run build
+# Build/install the JioSaavn sidecar if it needs building
+RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
+      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
+      npm ci --omit=dev && \
+      npm run build || true; \
+    fi
 
 ENV PORT=8080
 EXPOSE 8080
 
-# Copy start script and make executable
+# Ensure start.sh is present and executable
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
