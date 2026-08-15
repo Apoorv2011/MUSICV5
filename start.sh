@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- Config ---
+# Make sure uv is in PATH
+export PATH="/root/.local/bin:$PATH"
+
 SIDECAR_DIR="musicbot/jiosaavn-sidecar-clean/artifacts/api-server"
 SIDECAR_DIST="$SIDECAR_DIR/dist/index.mjs"
 SIDECAR_LOG="/tmp/sidecar.log"
@@ -9,7 +11,7 @@ SIDECAR_LOG="/tmp/sidecar.log"
 # --- Start JioSaavn sidecar on internal port 8081 ---
 if [ -d "$SIDECAR_DIR" ]; then
   if [ -f "$SIDECAR_DIST" ]; then
-    echo "Starting pre-built JioSaavn sidecar on internal port 8081..."
+    echo "Starting JioSaavn sidecar on internal port 8081..."
     ( cd "$SIDECAR_DIR" && PORT=8081 node --enable-source-maps ./dist/index.mjs ) &> "$SIDECAR_LOG" &
     echo "Sidecar started (logs -> $SIDECAR_LOG)"
   else
@@ -20,4 +22,8 @@ fi
 # --- Start the Python music bot in the foreground ---
 cd musicbot
 echo "Starting Python music bot..."
-python3 -m anony
+if command -v uv &>/dev/null; then
+  uv run python3 -m anony
+else
+  python3 -m anony
+fi
