@@ -13,7 +13,7 @@ if [ -d "$SIDECAR_DIR" ]; then
     ( cd "$SIDECAR_DIR" && PORT=8081 node --enable-source-maps ./dist/index.mjs ) &> "$SIDECAR_LOG" &
     echo "Sidecar started (logs -> $SIDECAR_LOG)"
   else
-    echo "Warning: sidecar dist not found at $SIDECAR_DIST — skipping sidecar start (check build logs)" >&2
+    echo "Warning: sidecar dist not found at $SIDECAR_DIST — skipping sidecar start" >&2
   fi
 fi
 
