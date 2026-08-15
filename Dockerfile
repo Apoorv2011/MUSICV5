@@ -2,7 +2,7 @@ FROM node:20-bullseye
 
 # Install python + build deps needed for pip wheels and general builds
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip && \
+    apt-get install -y python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY . /app
 # Enable corepack and activate pnpm (handles monorepo workspaces)
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install Node workspace deps at repo root using pnpm (includes dev deps so we can build)
+# Install Node workspace deps at repo root using pnpm
 RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
       pnpm install --frozen-lockfile || pnpm install --shamefully-hoist || pnpm install; \
     fi
@@ -21,14 +21,14 @@ RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
 # Build the sidecar package (if it exists)
 RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
       cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
-      pnpm run build || (echo "== sidecar build failed: see pnpm output above ==" && exit 0); \
+      pnpm run build || (echo "== sidecar build failed: see pnpm output above ==" && exit 1); \
     fi
 
-# Install Python deps (pyproject or requirements)
+# Install Python deps (fail build if package installation fails)
 RUN if [ -f musicbot/pyproject.toml ]; then \
-      pip3 install --no-cache-dir ./musicbot || true; \
+      pip3 install --no-cache-dir ./musicbot; \
     elif [ -f musicbot/requirements.txt ]; then \
-      pip3 install --no-cache-dir -r musicbot/requirements.txt || true; \
+      pip3 install --no-cache-dir -r musicbot/requirements.txt; \
     fi
 
 # Ensure start script is present and executable
