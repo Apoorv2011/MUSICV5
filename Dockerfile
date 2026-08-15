@@ -1,8 +1,8 @@
-FROM node:22-bullseye
+FROM node:22-bookworm
 
 # Install python + build deps needed for pip wheels and general builds
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -26,9 +26,9 @@ RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ];
 
 # Install Python deps
 RUN if [ -f musicbot/pyproject.toml ]; then \
-      pip3 install --no-cache-dir ./musicbot; \
+      pip3 install --no-cache-dir --break-system-packages ./musicbot; \
     elif [ -f musicbot/requirements.txt ]; then \
-      pip3 install --no-cache-dir -r musicbot/requirements.txt; \
+      pip3 install --no-cache-dir --break-system-packages -r musicbot/requirements.txt; \
     fi
 
 # Ensure start script is present and executable
