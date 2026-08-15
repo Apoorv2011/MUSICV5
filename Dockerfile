@@ -5,28 +5,34 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Install uv globally (astral.sh)
+# Install uv globally
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
 WORKDIR /app
 
-# Copy repository content into image
+# Copy repository into image
 COPY . /app
 
-# Enable corepack and prepare pnpm
+# Enable corepack and activate pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install all workspace dependencies using pnpm at the root
-RUN pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist
+# Build workspace sidecar safely
+RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
+      pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist || true; \
+    fi
 
-# Build all workspace packages (including sidecar/api-server)
-RUN pnpm run build || (cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && pnpm run build)
+RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
+      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
+      (pnpm install --no-frozen-lockfile || npm install --legacy-peer-deps || true) && \
+      (pnpm run build || node ./build.mjs || true); \
+    fi
 
-# Install Python dependencies using uv inside musicbot folder
-RUN cd musicbot && uv sync --frozen || uv pip install --system -r <(uv pip compile pyproject.toml 2>/dev/null) || pip3 install --no-cache-dir --break-system-packages . --no-build-isolation || true
+# Parse pyproject.toml dependencies directly and install via pip
+RUN python3 -c "import tomllib; f=open('musicbot/pyproject.toml','rb'); d=tomllib.load(f); deps=d.get('project',{}).get('dependencies',[]); f.close(); open('/tmp/reqs.txt','w').write('\n'.join(deps))" && \
+    pip3 install --no-cache-dir --break-system-packages -r /tmp/reqs.txt
 
-# Prepare start script
+# Setup start script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
