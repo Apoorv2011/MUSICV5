@@ -1,38 +1,32 @@
 FROM node:22-bookworm
 
-# Install python + build deps needed for pip wheels and general builds
+# Install system dependencies (ffmpeg, python, curl, build tools)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip ffmpeg curl && \
     rm -rf /var/lib/apt/lists/*
+
+# Install uv globally (astral.sh)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
 
 WORKDIR /app
 
-# Copy repository into image
+# Copy repository content into image
 COPY . /app
 
-# Enable corepack and activate pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+# Enable corepack and prepare pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install root dependencies
-RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
-      pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist || true; \
-    fi
+# Install all workspace dependencies using pnpm at the root
+RUN pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist
 
-# Build sidecar
-RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
-      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
-      pnpm install --no-frozen-lockfile && \
-      pnpm run build; \
-    fi
+# Build all workspace packages (including sidecar/api-server)
+RUN pnpm run build || (cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && pnpm run build)
 
-# Install Python deps directly from requirements.txt or editable mode (bypasses setuptools wheel discovery error)
-RUN if [ -f musicbot/requirements.txt ]; then \
-      pip3 install --no-cache-dir --break-system-packages -r musicbot/requirements.txt; \
-    elif [ -f musicbot/pyproject.toml ]; then \
-      pip3 install --no-cache-dir --break-system-packages -e ./musicbot || pip3 install --no-cache-dir --break-system-packages ./musicbot --no-build-isolation; \
-    fi
+# Install Python dependencies using uv inside musicbot folder
+RUN cd musicbot && uv sync --frozen || uv pip install --system -r <(uv pip compile pyproject.toml 2>/dev/null) || pip3 install --no-cache-dir --break-system-packages . --no-build-isolation || true
 
-# Ensure start script is present and executable
+# Prepare start script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
