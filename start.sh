@@ -20,4 +20,4 @@ fi
 # --- Start the Python music bot in the foreground ---
 cd musicbot
 echo "Starting Python music bot..."
-uv run python3 -m anony
+python3 -m anony
