@@ -10,18 +10,19 @@ WORKDIR /app
 # Copy repository into image
 COPY . /app
 
-# Enable corepack and activate pnpm v9 (prevents pnpm 11 build script restrictions)
+# Enable corepack and activate pnpm
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
-# Install Node workspace deps at repo root using pnpm
+# Install root dependencies
 RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
-      pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist; \
+      pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist || true; \
     fi
 
-# Build the sidecar package
+# Install dependencies AND build the sidecar package inside its own directory
 RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
       cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
-      pnpm run build || (echo "== sidecar build failed: see pnpm output above ==" && exit 1); \
+      pnpm install --no-frozen-lockfile && \
+      pnpm run build; \
     fi
 
 # Install Python deps
