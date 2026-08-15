@@ -10,12 +10,12 @@ WORKDIR /app
 # Copy repository into image
 COPY . /app
 
-# Enable corepack and activate pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable corepack and activate pnpm v9 (prevents pnpm 11 build script restrictions)
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 # Install Node workspace deps at repo root using pnpm
 RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
-      pnpm install --frozen-lockfile || pnpm install --shamefully-hoist || pnpm install; \
+      pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist; \
     fi
 
 # Build the sidecar package
