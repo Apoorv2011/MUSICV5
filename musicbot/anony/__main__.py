@@ -45,15 +45,17 @@ async def init():
     await userbot.start()
     await Anony.start()
 
-    # Safely load cookies if URL is provided without throwing AttributeError
-    if config.COOKIES_URL:
+    # Safely handle cookies without crashing if the method/attribute is missing
+    if getattr(config, "COOKIES_URL", None):
         try:
             from anony.core.youtube import YouTube
             yt = YouTube()
             if hasattr(yt, "save_cookies"):
                 await yt.save_cookies(config.COOKIES_URL)
+            else:
+                LOGGER("anony").info("YouTube helper has no save_cookies attribute; skipping cookie download.")
         except Exception as e:
-            LOGGER("anony").warning(f"Failed to download/save cookies: {e}")
+            LOGGER("anony").warning(f"Failed to load cookies from URL: {e}")
 
     try:
         await Anony.stream_call("https://batbin.me/raw/coelect")
