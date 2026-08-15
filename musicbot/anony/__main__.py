@@ -5,7 +5,8 @@ from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from anony import LOGGER, app, userbot
+from anony import app, userbot
+from anony.logging import LOGGER
 from anony.core.call import Anony
 from anony.misc import sudo
 from anony.plugins import ALL_MODULES
@@ -45,7 +46,7 @@ async def init():
     await userbot.start()
     await Anony.start()
 
-    # Safely handle cookies without crashing if the method/attribute is missing
+    # Safely handle cookies without crashing if attribute is missing
     if getattr(config, "COOKIES_URL", None):
         try:
             from anony.core.youtube import YouTube
