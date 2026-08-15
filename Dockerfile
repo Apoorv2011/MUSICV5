@@ -1,34 +1,42 @@
+# Dockerfile — paste whole file replacing existing Dockerfile
 FROM node:20-bullseye
 
-# Install python3 and system build dependencies needed to build wheels
+# Install python + build deps needed for pip wheels and general builds
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev && \
+    apt-get install -y python3 python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev zip unzip && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy repository
+# Copy entire repo into image
 COPY . /app
 
-# Install Python deps (try pyproject.toml first or requirements.txt). Allow failures to continue.
+# Enable corepack and activate pnpm (handles monorepo workspaces)
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Install node workspace deps at repo root using pnpm (includes dev deps so we can build)
+RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
+      pnpm install --frozen-lockfile || pnpm install; \
+    fi
+
+# Build the sidecar (will use hoisted workspace deps)
+RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
+      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
+      pnpm run build || (echo "sidecar build failed" && exit 0); \
+    fi
+
+# Install Python deps (pyproject or requirements)
 RUN if [ -f musicbot/pyproject.toml ]; then \
       pip3 install --no-cache-dir ./musicbot || true; \
     elif [ -f musicbot/requirements.txt ]; then \
       pip3 install --no-cache-dir -r musicbot/requirements.txt || true; \
     fi
 
-# Install and build JioSaavn sidecar: try npm ci, but fall back to npm install if no lockfile
-RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
-      cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
-      npm ci --omit=dev || npm install --omit=dev && \
-      npm run build || true; \
-    fi
+# Ensure start script is present and executable
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
 ENV PORT=8080
 EXPOSE 8080
-
-# Copy start script and make executable
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
 
 CMD ["/start.sh"]
