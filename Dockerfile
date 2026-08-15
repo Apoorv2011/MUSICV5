@@ -28,9 +28,9 @@ RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ];
       (pnpm run build || node ./build.mjs || true); \
     fi
 
-# Parse pyproject.toml dependencies directly and install via pip
+# Parse pyproject.toml dependencies and explicitly ensure yt-dlp is installed
 RUN python3 -c "import tomllib; f=open('musicbot/pyproject.toml','rb'); d=tomllib.load(f); deps=d.get('project',{}).get('dependencies',[]); f.close(); open('/tmp/reqs.txt','w').write('\n'.join(deps))" && \
-    pip3 install --no-cache-dir --break-system-packages -r /tmp/reqs.txt
+    pip3 install --no-cache-dir --break-system-packages -r /tmp/reqs.txt yt-dlp
 
 # Setup start script
 COPY start.sh /start.sh
