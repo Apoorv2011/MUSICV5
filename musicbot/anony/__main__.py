@@ -45,16 +45,6 @@ async def init():
     await userbot.start()
     await Anony.start()
 
-    # Safely load cookies without throwing AttributeError if save_cookies is missing
-    if getattr(config, "COOKIES_URL", None):
-        try:
-            from anony.core.youtube import YouTube
-            yt = YouTube()
-            if hasattr(yt, "save_cookies"):
-                await yt.save_cookies(config.COOKIES_URL)
-        except Exception as e:
-            LOGGER("anony").warning(f"Failed to load cookies: {e}")
-
     try:
         await Anony.stream_call("https://batbin.me/raw/coelect")
     except NoActiveGroupCall:
@@ -66,7 +56,9 @@ async def init():
         pass
 
     await Anony.decor()
-    LOGGER("anony").info("AnonX Music Bot Started Successfully.")
+    LOGGER("anony").info(
+        "AnonX Music Bot Started Successfully."
+    )
     await idle()
     await app.stop()
     await userbot.stop()
