@@ -18,18 +18,18 @@ RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
       pnpm install --no-frozen-lockfile || pnpm install --shamefully-hoist || true; \
     fi
 
-# Install dependencies AND build the sidecar package inside its own directory
+# Build sidecar
 RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
       cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
       pnpm install --no-frozen-lockfile && \
       pnpm run build; \
     fi
 
-# Install Python deps
-RUN if [ -f musicbot/pyproject.toml ]; then \
-      pip3 install --no-cache-dir --break-system-packages ./musicbot; \
-    elif [ -f musicbot/requirements.txt ]; then \
+# Install Python deps directly from requirements.txt or editable mode (bypasses setuptools wheel discovery error)
+RUN if [ -f musicbot/requirements.txt ]; then \
       pip3 install --no-cache-dir --break-system-packages -r musicbot/requirements.txt; \
+    elif [ -f musicbot/pyproject.toml ]; then \
+      pip3 install --no-cache-dir --break-system-packages -e ./musicbot || pip3 install --no-cache-dir --break-system-packages ./musicbot --no-build-isolation; \
     fi
 
 # Ensure start script is present and executable
