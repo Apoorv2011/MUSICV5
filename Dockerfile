@@ -18,13 +18,13 @@ RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
       pnpm install --frozen-lockfile || pnpm install --shamefully-hoist || pnpm install; \
     fi
 
-# Build the sidecar package (if it exists)
+# Build the sidecar package
 RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
       cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
       pnpm run build || (echo "== sidecar build failed: see pnpm output above ==" && exit 1); \
     fi
 
-# Install Python deps (fail build if package installation fails)
+# Install Python deps
 RUN if [ -f musicbot/pyproject.toml ]; then \
       pip3 install --no-cache-dir ./musicbot; \
     elif [ -f musicbot/requirements.txt ]; then \
