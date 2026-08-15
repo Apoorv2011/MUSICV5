@@ -1,4 +1,3 @@
-# Dockerfile — paste whole file replacing existing Dockerfile
 FROM node:20-bullseye
 
 # Install python + build deps needed for pip wheels and general builds
@@ -8,21 +7,21 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Copy entire repo into image
+# Copy repository into image
 COPY . /app
 
 # Enable corepack and activate pnpm (handles monorepo workspaces)
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install node workspace deps at repo root using pnpm (includes dev deps so we can build)
+# Install Node workspace deps at repo root using pnpm (includes dev deps so we can build)
 RUN if [ -f pnpm-workspace.yaml ] || [ -f package.json ]; then \
-      pnpm install --frozen-lockfile || pnpm install; \
+      pnpm install --frozen-lockfile || pnpm install --shamefully-hoist || pnpm install; \
     fi
 
-# Build the sidecar (will use hoisted workspace deps)
+# Build the sidecar package (if it exists)
 RUN if [ -f musicbot/jiosaavn-sidecar-clean/artifacts/api-server/package.json ]; then \
       cd musicbot/jiosaavn-sidecar-clean/artifacts/api-server && \
-      pnpm run build || (echo "sidecar build failed" && exit 0); \
+      pnpm run build || (echo "== sidecar build failed: see pnpm output above ==" && exit 0); \
     fi
 
 # Install Python deps (pyproject or requirements)
