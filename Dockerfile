@@ -1,4 +1,4 @@
-FROM node:20-bullseye
+FROM node:22-bullseye
 
 # Install python + build deps needed for pip wheels and general builds
 RUN apt-get update && \
@@ -10,7 +10,7 @@ WORKDIR /app
 # Copy repository into image
 COPY . /app
 
-# Enable corepack and activate pnpm (handles monorepo workspaces)
+# Enable corepack and activate pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Install Node workspace deps at repo root using pnpm
