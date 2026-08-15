@@ -18,9 +18,15 @@ class Config:
         self.QUEUE_LIMIT = int(getenv("QUEUE_LIMIT", 20))
         self.PLAYLIST_LIMIT = int(getenv("PLAYLIST_LIMIT", 20))
 
-        self.SESSION1 = getenv("SESSION", None)
-        self.SESSION2 = getenv("SESSION2", None)
-        self.SESSION3 = getenv("SESSION3", None)
+        # Automatically strips quotes, spaces, and line breaks from Railway UI multi-line values
+        raw1 = getenv("SESSION1") or getenv("TELEGRAM_SESSION") or getenv("SESSION") or ""
+        self.SESSION1 = "".join(raw1.replace('"', '').replace("'", "").split()) or None
+
+        raw2 = getenv("SESSION2") or ""
+        self.SESSION2 = "".join(raw2.replace('"', '').replace("'", "").split()) or None
+
+        raw3 = getenv("SESSION3") or ""
+        self.SESSION3 = "".join(raw3.replace('"', '').replace("'", "").split()) or None
 
         self.SUPPORT_CHANNEL = getenv(
             "SUPPORT_CHANNEL", "https://t.me/MeisouUpdates"
