@@ -7,7 +7,6 @@ from PIL import (Image, ImageDraw, ImageEnhance,
 from anony import config, logger
 from anony.helpers._dataclass import Track
 
-
 class Thumbnail:
     def __init__(self):
         self.rect = (914, 514)
