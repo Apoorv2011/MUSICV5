@@ -7,17 +7,22 @@ from PIL import (Image, ImageDraw, ImageEnhance,
 from anony import config, logger
 from anony.helpers._dataclass import Track
 
+# Dynamically resolve absolute paths relative to this file's folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FONT_RALEWAY = os.path.join(BASE_DIR, "Raleway-Bold.ttf")
+FONT_INTER = os.path.join(BASE_DIR, "Inter-Light.ttf")
 class Thumbnail:
     def __init__(self):
         self.rect = (914, 514)
         self.fill = (255, 255, 255)
         self.mask = Image.new("L", self.rect, 0)
-        self.font1 = ImageFont.truetype("anony/helpers/Raleway-Bold.ttf", 30)
-        self.font2 = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 30)
+        try:
+            self.font1 = ImageFont.truetype(FONT_RALEWAY, 30)
+            self.font2 = ImageFont.truetype(FONT_INTER, 30)
+        except OSError:
+            self.font1 = ImageFont.load_default()
+            self.font2 = ImageFont.load_default()
         self.session: aiohttp.ClientSession | None = None
-
-    async def start(self) -> None:
-        self.session = aiohttp.ClientSession()
 
     async def close(self) -> None:
         await self.session.close()
