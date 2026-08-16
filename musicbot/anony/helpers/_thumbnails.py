@@ -7,10 +7,13 @@ from PIL import (Image, ImageDraw, ImageEnhance,
 from anony import config, logger
 from anony.helpers._dataclass import Track
 
-# Dynamically resolve absolute paths relative to this file's folder
+# Dynamically resolve absolute paths relative to this file's directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_RALEWAY = os.path.join(BASE_DIR, "Raleway-Bold.ttf")
 FONT_INTER = os.path.join(BASE_DIR, "Inter-Light.ttf")
+LOGO_PATH = os.path.join(os.path.dirname(BASE_DIR), "assets", "bot_logo.png")
+
+
 class Thumbnail:
     def __init__(self):
         self.rect = (914, 514)
@@ -23,6 +26,9 @@ class Thumbnail:
             self.font1 = ImageFont.load_default()
             self.font2 = ImageFont.load_default()
         self.session: aiohttp.ClientSession | None = None
+
+    async def start(self) -> None:
+        self.session = aiohttp.ClientSession()
 
     async def close(self) -> None:
         await self.session.close()
@@ -60,9 +66,9 @@ class Thumbnail:
 
             W, H = 950, 500
 
-            font_title  = ImageFont.truetype("anony/helpers/Raleway-Bold.ttf", 32)
-            font_artist = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 24)
-            font_time   = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 20)
+            font_title  = ImageFont.truetype(FONT_RALEWAY, 32)
+            font_artist = ImageFont.truetype(FONT_INTER, 24)
+            font_time   = ImageFont.truetype(FONT_INTER, 20)
 
             # Background
             img = Image.new("RGBA", (W, H), (11, 11, 30, 255))
@@ -127,10 +133,9 @@ class Thumbnail:
             # Bot logo (top right, circular)
             logo_sz = 90
             lx, ly = W - logo_sz - 28, 22
-            logo_path = "anony/assets/bot_logo.png"
-            if os.path.exists(logo_path):
+            if os.path.exists(LOGO_PATH):
                 try:
-                    logo = Image.open(logo_path).convert("RGBA").resize(
+                    logo = Image.open(LOGO_PATH).convert("RGBA").resize(
                         (logo_sz, logo_sz), Image.Resampling.LANCZOS)
                     lm = Image.new("L", (logo_sz, logo_sz), 0)
                     ImageDraw.Draw(lm).ellipse((0, 0, logo_sz, logo_sz), fill=255)
@@ -140,7 +145,7 @@ class Thumbnail:
                     pass
             else:
                 draw.ellipse((lx, ly, lx + logo_sz, ly + logo_sz), fill=(80, 40, 140))
-                fn = ImageFont.truetype("anony/helpers/Raleway-Bold.ttf", 38)
+                fn = ImageFont.truetype(FONT_RALEWAY, 38)
                 draw.text((lx + 22, ly + 22), "♪", font=fn, fill=(255, 255, 255))
 
             os.makedirs("cache/thumbs", exist_ok=True)
@@ -161,10 +166,10 @@ class Thumbnail:
 
             W, H = 1280, 640
 
-            font_title  = ImageFont.truetype("anony/helpers/Raleway-Bold.ttf", 50)
-            font_sub    = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 26)
-            font_small  = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 20)
-            font_badge  = ImageFont.truetype("anony/helpers/Inter-Light.ttf", 18)
+            font_title  = ImageFont.truetype(FONT_RALEWAY, 50)
+            font_sub    = ImageFont.truetype(FONT_INTER, 26)
+            font_small  = ImageFont.truetype(FONT_INTER, 20)
+            font_badge  = ImageFont.truetype(FONT_INTER, 18)
 
             # Background: blurred + darkened song thumbnail
             temp_bg = f"cache/thumbs/tmp_d2bg_{song.id}.jpg"
