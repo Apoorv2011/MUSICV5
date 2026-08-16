@@ -1,10 +1,13 @@
-# musicbot/anony/__init__.py
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
+
 import time
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
-# Ensure logging & LOGGER exist immediately so imports cannot fail
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -14,27 +17,20 @@ logging.basicConfig(
     ],
     level=logging.INFO,
 )
-
-# Module-level logger
-logger = logging.getLogger(__name__)
-
-# Backwards-compatible LOGGER factory so `from anony import LOGGER` works
-def LOGGER(name: str):
-    return logger.getChild(name)
-
-# Quiet noisy libraries
 logging.getLogger("httpx").setLevel(logging.ERROR)
 logging.getLogger("ntgcalls").setLevel(logging.CRITICAL)
 logging.getLogger("pymongo").setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("pytgcalls").setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
+
 
 __version__ = "3.0.3"
 
-# Import config object but DO NOT call config.check() here (main will call it).
 from config import Config
-config = Config()
 
+config = Config()
+config.check()
 tasks = []
 boot = time.time()
 
