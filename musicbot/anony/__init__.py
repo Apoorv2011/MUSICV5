@@ -1,13 +1,9 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 import time
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
+# --- Logging / LOGGER compatibility (defined first so imports work) ---
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -17,20 +13,33 @@ logging.basicConfig(
     ],
     level=logging.INFO,
 )
+
+# Module-level logger
+logger = logging.getLogger(__name__)
+
+# Backwards-compatible LOGGER factory so older code that does
+# `from anony import LOGGER` keeps working.
+def LOGGER(name: str):
+    return logger.getChild(name)
+
+
+# Quiet noisy libraries
 logging.getLogger("httpx").setLevel(logging.ERROR)
 logging.getLogger("ntgcalls").setLevel(logging.CRITICAL)
 logging.getLogger("pymongo").setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("pytgcalls").setLevel(logging.ERROR)
-logger = logging.getLogger(__name__)
-
 
 __version__ = "3.0.3"
 
+# Import and instantiate config (this exposes `config` for `from anony import config`)
 from config import Config
 
 config = Config()
+# Call config.check() here (same as original behavior). It will raise SystemExit
+# if required env vars are missing. LOGGER already exists so errors will be logged.
 config.check()
+
 tasks = []
 boot = time.time()
 
