@@ -5,25 +5,44 @@ from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from anony import logger, app, userbot
+# Try to import a pre-existing LOGGER factory (some repo variants export LOGGER).
+# Otherwise import the module-level logger and create a small LOGGER factory locally.
+try:
+    from anony import LOGGER, app, userbot  # type: ignore
+except Exception:
+    from anony import logger, app, userbot  # type: ignore
+
+    def LOGGER(name: str):
+        return logger.getChild(name)
+
 from anony.core.call import Anony
 from anony.misc import sudo
 from anony.plugins import ALL_MODULES
 from anony.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
-# Backwards-compatible LOGGER factory used by older code that imports LOGGER
-def LOGGER(name: str):
-    return logger.getChild(name)
 
-
-def _has_sessions():
-    # Config uses SESSION1/SESSION2/SESSION3 — check those instead of STRING1..STRING5
-    return bool(
-        getattr(config, "SESSION1", None)
-        or getattr(config, "SESSION2", None)
-        or getattr(config, "SESSION3", None)
-    )
+def _has_sessions() -> bool:
+    """
+    Check for any session/assistant environment names used by different repo versions.
+    This keeps the check backwards-compatible.
+    """
+    keys = [
+        "STRING1",
+        "STRING2",
+        "STRING3",
+        "STRING4",
+        "STRING5",
+        "SESSION1",
+        "SESSION2",
+        "SESSION3",
+        "TELEGRAM_SESSION",
+        "SESSION",
+    ]
+    for k in keys:
+        if getattr(config, k, None):
+            return True
+    return False
 
 
 async def init():
@@ -41,10 +60,12 @@ async def init():
         for user_id in users:
             BANNED_USERS.add(user_id)
     except Exception:
+        # ignore DB errors during boot so we can still surface better startup errors later
         pass
 
     await app.start()
 
+    # import all plugins (keeps the same behavior as older main)
     for module in ALL_MODULES:
         importlib.import_module("anony.plugins." + module)
 
@@ -60,6 +81,7 @@ async def init():
         )
         exit()
     except Exception:
+        # ignore and continue if streaming fails
         pass
 
     await Anony.decor()
