@@ -1,70 +1,51 @@
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
 import asyncio
+import signal
 import importlib
+from contextlib import suppress
 
-from pyrogram import idle
-from pytgcalls.exceptions import NoActiveGroupCall
-
-import config
-from anony import LOGGER, app, userbot
-from anony.core.call import Anony
-from anony.misc import sudo
-from anony.plugins import ALL_MODULES
-from anony.utils.database import get_banned_users, get_gbanned
-from config import BANNED_USERS
+from anony import (anon, app, config, db, logger,
+                   stop, thumb, userbot, yt)
+from anony.plugins import all_modules
 
 
-async def init():
-    if (
-        not config.STRING1
-        and not config.STRING2
-        and not config.STRING3
-        and not config.STRING4
-        and not config.STRING5
-    ):
-        LOGGER("anony").error("Assistant client variables not defined, exiting...")
-        exit()
-    
-    await sudo()
-    
-    try:
-        users = await get_banned_users()
-        for user_id in users:
-            BANNED_USERS.add(user_id)
-        users = await get_gbanned()
-        for user_id in users:
-            BANNED_USERS.add(user_id)
-    except Exception:
-        pass
+async def idle():
+    loop = asyncio.get_running_loop()
+    stop_event = asyncio.Event()
 
-    await app.start()
+    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGABRT):
+        with suppress(NotImplementedError):
+            loop.add_signal_handler(sig, stop_event.set)
+    await stop_event.wait()
 
-    for module in ALL_MODULES:
-        importlib.import_module("anony.plugins." + module)
+async def main():
+    await db.connect()
+    await app.boot()
+    await userbot.boot()
+    await anon.boot()
+    await thumb.start()
 
-    LOGGER("anony.plugins").info("Successfully loaded Modules...")
-    await userbot.start()
-    await Anony.start()
+    for module in all_modules:
+        importlib.import_module(f"anony.plugins.{module}")
+    logger.info(f"Loaded {len(all_modules)} modules.")
 
-    try:
-        await Anony.stream_call("https://batbin.me/raw/coelect")
-    except NoActiveGroupCall:
-        LOGGER("anony").error(
-            "Please turn on the video chat of your log group/channel. Stopping Bot..."
-        )
-        exit()
-    except Exception:
-        pass
+    if config.COOKIES_URL:
+        await yt.save_cookies(config.COOKIES_URL)
 
-    await Anony.decor()
-    LOGGER("anony").info("AnonX Music Bot Started Successfully.")
+    sudoers = await db.get_sudoers()
+    app.sudoers.update(sudoers)
+    app.bl_users.update(await db.get_blacklisted())
+    logger.info(f"Loaded {len(app.sudoers)} sudo users.")
+
     await idle()
-    await app.stop()
-    await userbot.stop()
-    LOGGER("anony").info("Stopping AnonX Music Bot...")
+    asyncio.create_task(stop())
 
 
 if __name__ == "__main__":
     try:
-        asyncio.run(init())
-    except (KeyboardInterrupt, SystemExit):
+        asyncio.get_event_loop().run_until_complete(main())
+    except KeyboardInterrupt:
         pass
