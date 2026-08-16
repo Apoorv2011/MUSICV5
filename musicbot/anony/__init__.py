@@ -1,13 +1,12 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
+# musicbot/anony/__init__.py
+# Minimal safe package init that guarantees LOGGER is available immediately.
 
 import time
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
+# --- Ensure logging & LOGGER exist immediately so other modules can import them ---
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -17,25 +16,37 @@ logging.basicConfig(
     ],
     level=logging.INFO,
 )
+
+# Module-level logger
+logger = logging.getLogger(__name__)
+
+# Backwards-compatible LOGGER factory so `from anony import LOGGER` works
+def LOGGER(name: str):
+    return logger.getChild(name)
+
+# Quiet noisy libraries
 logging.getLogger("httpx").setLevel(logging.ERROR)
 logging.getLogger("ntgcalls").setLevel(logging.CRITICAL)
 logging.getLogger("pymongo").setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("pytgcalls").setLevel(logging.ERROR)
-logger = logging.getLogger(__name__)
-
 
 __version__ = "3.0.3"
 
+# Import the config object but do NOT call config.check() here.
+# Keeping config.check() out of import-time prevents import aborts that would
+# make LOGGER unavailable. The application entrypoint (__main__.py) should call
+# config.check() after imports succeed.
 from config import Config
 
 config = Config()
-config.check()
+
 tasks = []
 boot = time.time()
 
+# preserve existing startup behavior: instantiate components
 import player_style as _ps
-_ps.set_default(config.PLAYER_STYLE)
+_ps.set_default(getattr(config, "PLAYER_STYLE", None))
 
 from anony.core.bot import Bot
 app = Bot()
