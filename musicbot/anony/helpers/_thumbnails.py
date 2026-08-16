@@ -19,12 +19,15 @@ class Thumbnail:
         self.rect = (914, 514)
         self.fill = (255, 255, 255)
         self.mask = Image.new("L", self.rect, 0)
+        
+        # Safe font loading using dynamic absolute paths
         try:
             self.font1 = ImageFont.truetype(FONT_RALEWAY, 30)
             self.font2 = ImageFont.truetype(FONT_INTER, 30)
         except OSError:
             self.font1 = ImageFont.load_default()
             self.font2 = ImageFont.load_default()
+            
         self.session: aiohttp.ClientSession | None = None
 
     async def start(self) -> None:
@@ -52,7 +55,6 @@ class Thumbnail:
         elif style == 3:
             return await self.generate(song)
         else:
-            # Design 4 – raw thumbnail from API, no processing
             return song.thumbnail or config.DEFAULT_THUMB
 
     # ── Design 1 – Alexa Style ────────────────────────────────────────────────
