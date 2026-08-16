@@ -21,10 +21,6 @@ ROOT_DIR = pathlib.Path(__file__).resolve().parent
 
 
 def _has_sessions() -> bool:
-    """
-    Backwards-compatible check used by older main: keep the original STRING* checks
-    while also accepting SESSION1/SESSION2/SESSION3 or TELEGRAM_SESSION/SESSION.
-    """
     keys = [
         "STRING1",
         "STRING2",
@@ -44,10 +40,6 @@ def _has_sessions() -> bool:
 
 
 def _download_cookies(urls, out_path: pathlib.Path) -> bool:
-    """
-    Download items from the provided URLs and append them into out_path.
-    Returns True if any content was written.
-    """
     if not urls:
         return False
 
@@ -55,7 +47,6 @@ def _download_cookies(urls, out_path: pathlib.Path) -> bool:
     wrote = False
     for url in urls:
         try:
-            # small timeout so deploy doesn't hang forever
             with urllib.request.urlopen(url, timeout=10) as r:
                 content = r.read()
                 if content:
@@ -70,13 +61,18 @@ def _download_cookies(urls, out_path: pathlib.Path) -> bool:
 
 
 async def init():
-    # Keep the original behavior: config.check() already ran in anony.__init__.
-    # Check sessions like the original code did.
+    # Validate environment now that imports succeeded
+    try:
+        config.check()
+    except SystemExit as e:
+        LOGGER(__name__).error("Configuration check failed: %s", e)
+        raise
+
     if not _has_sessions():
         LOGGER(__name__).error("Assistant client variables not defined, exiting...")
         exit()
 
-    # If config exposes COOKIES_URL (a list), try to download them into a local file
+    # Download cookie files listed in config.COOKIES_URL (if any)
     try:
         cookie_urls = getattr(config, "COOKIES_URL", []) or []
     except Exception:
@@ -85,11 +81,10 @@ async def init():
     if cookie_urls:
         cookies_file = ROOT_DIR / "cookies" / "cookies.txt"
         if _download_cookies(cookie_urls, cookies_file):
-            # Expose to the process as YTDLP_COOKIES for yt-dlp callers to use
             os.environ["YTDLP_COOKIES"] = str(cookies_file)
             LOGGER("anony.startup").info("YTDLP_COOKIES set to %s", cookies_file)
         else:
-            LOGGER("anony.startup").warning("COOKIES_URL provided but no cookies were downloaded")
+            LOGGER("anony.startup").warning("COOKIES_URL provided but no cookies downloaded")
 
     await sudo()
 
@@ -123,9 +118,7 @@ async def init():
         pass
 
     await Anony.decor()
-    LOGGER("anony").info(
-        "AnonX Music Bot Started Successfully."
-    )
+    LOGGER("anony").info("AnonX Music Bot Started Successfully.")
     await idle()
     await app.stop()
     await userbot.stop()
