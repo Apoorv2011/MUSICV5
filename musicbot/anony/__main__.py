@@ -5,27 +5,34 @@ from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from anony import LOGGER, app, userbot
+from anony import logger, app, userbot
 from anony.core.call import Anony
 from anony.misc import sudo
 from anony.plugins import ALL_MODULES
 from anony.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
+# Backwards-compatible LOGGER factory used by older code that imports LOGGER
+def LOGGER(name: str):
+    return logger.getChild(name)
+
+
+def _has_sessions():
+    # Config uses SESSION1/SESSION2/SESSION3 — check those instead of STRING1..STRING5
+    return bool(
+        getattr(config, "SESSION1", None)
+        or getattr(config, "SESSION2", None)
+        or getattr(config, "SESSION3", None)
+    )
+
 
 async def init():
-    if (
-        not config.STRING1
-        and not config.STRING2
-        and not config.STRING3
-        and not config.STRING4
-        and not config.STRING5
-    ):
+    if not _has_sessions():
         LOGGER(__name__).error("Assistant client variables not defined, exiting...")
         exit()
-    
+
     await sudo()
-    
+
     try:
         users = await get_banned_users()
         for user_id in users:
@@ -56,9 +63,7 @@ async def init():
         pass
 
     await Anony.decor()
-    LOGGER("anony").info(
-        "AnonX Music Bot Started Successfully."
-    )
+    LOGGER("anony").info("AnonX Music Bot Started Successfully.")
     await idle()
     await app.stop()
     await userbot.stop()
