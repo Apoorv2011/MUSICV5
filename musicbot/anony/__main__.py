@@ -4,19 +4,13 @@ import importlib
 from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
-# Fallback import for config
-try:
-    import config
-except ModuleNotFoundError:
-    import musicbot.config as config
-
+import config
 from anony import LOGGER, app, userbot
 from anony.core.call import Anony
 from anony.misc import sudo
 from anony.plugins import ALL_MODULES
 from anony.utils.database import get_banned_users, get_gbanned
-
-BANNED_USERS = config.BANNED_USERS
+from config import BANNED_USERS
 
 
 async def init():
@@ -70,4 +64,7 @@ async def init():
 
 
 if __name__ == "__main__":
-    asyncio.run(init())
+    try:
+        asyncio.run(init())
+    except (KeyboardInterrupt, SystemExit):
+        pass
