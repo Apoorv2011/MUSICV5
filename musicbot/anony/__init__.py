@@ -4,7 +4,7 @@ import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
-# --- Ensure logging & LOGGER exist immediately so other modules can import them ---
+# Ensure logging & LOGGER exist immediately so imports cannot fail
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -31,7 +31,7 @@ logging.getLogger("pytgcalls").setLevel(logging.ERROR)
 
 __version__ = "3.0.3"
 
-# Import config object but DO NOT call config.check() here (we do it in __main__)
+# Import config object but DO NOT call config.check() here (main will call it).
 from config import Config
 config = Config()
 
