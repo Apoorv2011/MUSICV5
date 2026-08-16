@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 import json
 from functools import wraps
 from pathlib import Path
@@ -35,25 +30,52 @@ class Language:
 
     def __init__(self):
         self.lang_codes = lang_codes
-        self.lang_dir = Path("anony/locales")
+        # Resolve absolute directory relative to this file's location
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        self.lang_dir = BASE_DIR / "locales"
+        
+        # Fallback search if locales folder is in root
+        if not self.lang_dir.exists():
+            self.lang_dir = Path("anony/locales").resolve()
+
         self.languages = self.load_files()
 
     def load_files(self):
         languages = {}
-        lang_files = {file.stem: file for file in self.lang_dir.glob("*.json")}
-        for lang_code, lang_file in lang_files.items():
-            with open(lang_file, "r", encoding="utf-8") as file:
-                languages[lang_code] = json.load(file)
-        logger.info(f"Loaded languages: {', '.join(languages.keys())}")
+        if self.lang_dir.exists():
+            lang_files = {file.stem: file for file in self.lang_dir.glob("*.json")}
+            for lang_code, lang_file in lang_files.items():
+                try:
+                    with open(lang_file, "r", encoding="utf-8") as file:
+                        languages[lang_code] = json.load(file)
+                except Exception as e:
+                    logger.warning(f"Failed to load language file {lang_file}: {e}")
+        
+        logger.info(f"Loaded languages: {', '.join(languages.keys()) if languages else 'None'}")
         return languages
 
+    def _get_lang_dict(self, lang_code: str) -> dict:
+        """Safely fetch language dictionary with fallbacks."""
+        if lang_code in self.languages:
+            return self.languages[lang_code]
+        if "en" in self.languages:
+            return self.languages["en"]
+        if self.languages:
+            return next(iter(self.languages.values()))
+        return {}
+
     async def get_lang(self, chat_id: int) -> dict:
-        lang_code = await db.get_lang(chat_id)
-        return self.languages[lang_code]
+        try:
+            lang_code = await db.get_lang(chat_id)
+        except Exception:
+            lang_code = "en"
+        return self._get_lang_dict(lang_code)
 
     def get_languages(self) -> dict:
+        if not self.lang_dir.exists():
+            return {}
         files = {f.stem for f in self.lang_dir.glob("*.json")}
-        return {code: self.lang_codes[code] for code in sorted(files)}
+        return {code: self.lang_codes[code] for code in sorted(files) if code in self.lang_codes}
 
     def language(self):
         def decorator(func):
@@ -68,22 +90,29 @@ class Language:
                     None,
                 )
 
-                if not fallen.from_user:
+                if not fallen or not getattr(fallen, "from_user", None):
                     return
 
                 if hasattr(fallen, "chat"):
                     chat = fallen.chat
                 elif hasattr(fallen, "message"):
                     chat = fallen.message.chat
+                else:
+                    chat = None
 
-                if not chat: return
+                if not chat:
+                    return
 
-                if chat.id in db.blacklisted:
+                if hasattr(db, "blacklisted") and chat.id in db.blacklisted:
                     logger.info(f"Chat {chat.id} is blacklisted, leaving...")
                     return await chat.leave()
 
-                lang_code = await db.get_lang(chat.id)
-                lang_dict = self.languages[lang_code]
+                try:
+                    lang_code = await db.get_lang(chat.id)
+                except Exception:
+                    lang_code = getattr(fallen.from_user, "language_code", "en") or "en"
+
+                lang_dict = self._get_lang_dict(lang_code)
 
                 setattr(fallen, "lang", lang_dict)
                 try:
