@@ -4,13 +4,19 @@ import importlib
 from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
-import config
+# Fallback import for config
+try:
+    import config
+except ModuleNotFoundError:
+    import musicbot.config as config
+
 from anony import LOGGER, app, userbot
 from anony.core.call import Anony
 from anony.misc import sudo
 from anony.plugins import ALL_MODULES
 from anony.utils.database import get_banned_users, get_gbanned
-from config import BANNED_USERS
+
+BANNED_USERS = config.BANNED_USERS
 
 
 async def init():
@@ -21,7 +27,7 @@ async def init():
         and not config.STRING4
         and not config.STRING5
     ):
-        LOGGER(__name__).error("Assistant client variables not defined, exiting...")
+        LOGGER("anony").error("Assistant client variables not defined, exiting...")
         exit()
     
     await sudo()
@@ -56,9 +62,7 @@ async def init():
         pass
 
     await Anony.decor()
-    LOGGER("anony").info(
-        "AnonX Music Bot Started Successfully."
-    )
+    LOGGER("anony").info("AnonX Music Bot Started Successfully.")
     await idle()
     await app.stop()
     await userbot.stop()
@@ -66,4 +70,4 @@ async def init():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(init())
+    asyncio.run(init())
