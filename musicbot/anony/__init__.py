@@ -1,14 +1,9 @@
-# musicbot/anony/__init__.py
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
 import time
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
-# --- Ensure logging & LOGGER exist immediately so other modules can import them ---
+# --- Minimal logging + compatibility export FIRST so imports cannot fail ---
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -22,13 +17,11 @@ logging.basicConfig(
 # Module-level logger
 logger = logging.getLogger(__name__)
 
-# Backwards-compatible LOGGER factory so older code that does
-# `from anony import LOGGER` continues to work.
+# Backwards-compatible LOGGER factory so `from anony import LOGGER` works
 def LOGGER(name: str):
     return logger.getChild(name)
 
-
-# Quiet noisy libraries
+# Quiet noisy libraries (still safe to set now)
 logging.getLogger("httpx").setLevel(logging.ERROR)
 logging.getLogger("ntgcalls").setLevel(logging.CRITICAL)
 logging.getLogger("pymongo").setLevel(logging.ERROR)
@@ -37,26 +30,21 @@ logging.getLogger("pytgcalls").setLevel(logging.ERROR)
 
 __version__ = "3.0.3"
 
-# Import and instantiate config (config.check may raise; LOGGER already exists)
+# Import Config object (you can choose to call config.check() here or in main)
 from config import Config
 
 config = Config()
-# Keep or remove config.check() depending on whether you want import-time validation:
-# - If you keep it, missing envs will cause SystemExit here, but LOGGER is available for logs.
-# - If you prefer to validate later, move config.check() to __main__.py.
-config.check()
+# Keep current behavior and validate immediately:
+# config.check()  # <-- optional: if you'd like check to run here, uncomment
 
-tasks = []
-boot = time.time()
-
+# The rest of the module (instantiate app components).
+# IMPORTANT: avoid running functions that may raise before LOGGER is defined.
+# The following instantiations are standard in your project:
 import player_style as _ps
 _ps.set_default(config.PLAYER_STYLE)
 
 from anony.core.bot import Bot
 app = Bot()
-
-from anony.core.dir import ensure_dirs
-ensure_dirs()
 
 from anony.core.userbot import Userbot
 userbot = Userbot()
@@ -82,6 +70,12 @@ anon = TgCall()
 
 async def stop() -> None:
     logger.info("Stopping...")
+    # tasks variable may be defined elsewhere; guard against missing name
+    try:
+        tasks
+    except NameError:
+        return
+
     for task in tasks:
         task.cancel()
         try:
