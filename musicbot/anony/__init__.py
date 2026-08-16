@@ -1,9 +1,14 @@
+# musicbot/anony/__init__.py
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
 import time
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
-# --- Logging / LOGGER compatibility (defined first so imports work) ---
+# --- Ensure logging & LOGGER exist immediately so other modules can import them ---
 logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s: %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
@@ -18,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Backwards-compatible LOGGER factory so older code that does
-# `from anony import LOGGER` keeps working.
+# `from anony import LOGGER` continues to work.
 def LOGGER(name: str):
     return logger.getChild(name)
 
@@ -32,12 +37,13 @@ logging.getLogger("pytgcalls").setLevel(logging.ERROR)
 
 __version__ = "3.0.3"
 
-# Import and instantiate config (this exposes `config` for `from anony import config`)
+# Import and instantiate config (config.check may raise; LOGGER already exists)
 from config import Config
 
 config = Config()
-# Call config.check() here (same as original behavior). It will raise SystemExit
-# if required env vars are missing. LOGGER already exists so errors will be logged.
+# Keep or remove config.check() depending on whether you want import-time validation:
+# - If you keep it, missing envs will cause SystemExit here, but LOGGER is available for logs.
+# - If you prefer to validate later, move config.check() to __main__.py.
 config.check()
 
 tasks = []
