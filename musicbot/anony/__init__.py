@@ -1,4 +1,8 @@
-# musicbot/anony/__init__.py
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
+
 import time
 import asyncio
 import logging
@@ -13,37 +17,25 @@ logging.basicConfig(
     ],
     level=logging.INFO,
 )
-
-logger = logging.getLogger("anony")
-
-def LOGGER(name: str):
-    return logger.getChild(name)
-
 logging.getLogger("httpx").setLevel(logging.ERROR)
 logging.getLogger("ntgcalls").setLevel(logging.CRITICAL)
 logging.getLogger("pymongo").setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("pytgcalls").setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
+
 
 __version__ = "3.0.3"
 
-# Fallback import to support both root and directory-level execution
-try:
-    from config import Config
-except ModuleNotFoundError:
-    from musicbot.config import Config
+from config import Config
 
 config = Config()
-
+config.check()
 tasks = []
 boot = time.time()
 
-try:
-    import player_style as _ps
-except ModuleNotFoundError:
-    import musicbot.player_style as _ps
-
-_ps.set_default(getattr(config, "PLAYER_STYLE", None))
+import player_style as _ps
+_ps.set_default(config.PLAYER_STYLE)
 
 from anony.core.bot import Bot
 app = Bot()
@@ -71,6 +63,7 @@ thumb = Thumbnail()
 
 from anony.core.calls import TgCall
 anon = TgCall()
+
 
 async def stop() -> None:
     logger.info("Stopping...")
