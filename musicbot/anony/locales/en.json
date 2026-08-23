@@ -79,12 +79,7 @@
   "play_searching": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>ѕєαʀᴄнɪηɢ <b>ʏσυʀ</b> ѕσηɢ 🎶</i>",
   "play_downloading": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>ᴅσωηℓσαᴅɪηɢ <b>ʏσυʀ</b> <b>ѕσηɢ</b> 🎶</i>",
   "play_paused": "<b>𝛅ᴛʀєαᴍ ᴘαυѕєᴅ.</b>"
-  "play_searching": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>sᴇᴀʀᴄʜɪɴɢ ʏᴏᴜʀ sᴏɴɢ 🎶</i>",
-  "play_downloading": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ʏᴏᴜʀ sᴏɴɢ 🎶</i>",
-  "vc_started": "🎉 <b>ʏᴀʏ 𝐏𝐀𝐑𝐓𝐘 ᴛɪᴍᴇ!</b> 🎶",
-  "vc_ended": "🥺 <b>ALLE BAND KARDIYA</b> 💔",
-  "play_paused": "<b>Stream paused by</b> {0}",
-    "play_resumed": "<b>Stream resumed by</b> {0}",
+   "play_resumed": "<b>Stream resumed by</b> {0}",
     "play_replayed": "<b>Stream replayed by</b> {0}",
     "play_skipped": "<b>Stream skipped by</b> {0}",
     "play_stopped": "<b>Stream ended by</b> {0}",
