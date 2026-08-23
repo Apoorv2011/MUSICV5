@@ -78,7 +78,7 @@
   "play_invite": "𝕳σℓᴅ ση α ᴍσᴍєηᴛ...\n\n𐌉ηᴠɪᴛɪηɢ {0} αѕѕɪѕᴛαηᴛ ᴛσ ʏσυʀ ᴄнαᴛ.",
   "play_searching": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>ѕєαʀᴄнɪηɢ <b>ʏσυʀ</b> ѕσηɢ 🎶</i>",
   "play_downloading": "💌 <b>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴅᴀʀʟɪɴɢ...</b>\n<i>ᴅσωηℓσαᴅɪηɢ <b>ʏσυʀ</b> <b>ѕσηɢ</b> 🎶</i>",
-  "play_paused": "<b>𝛅ᴛʀєαᴍ ᴘαυѕєᴅ.</b>"
+    "play_paused": "<b>𝛅ᴛʀєαᴍ ᴘαυѕєᴅ.</b>"
    "play_resumed": "<b>Stream resumed by</b> {0}",
     "play_replayed": "<b>Stream replayed by</b> {0}",
     "play_skipped": "<b>Stream skipped by</b> {0}",
@@ -153,3 +153,4 @@
     "help_7": "Stats",
     "help_8": "Sudoers"
 }
+
