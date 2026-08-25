@@ -1,3 +1,4 @@
+# anony/core/calls.py
 from typing import Optional
 
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
@@ -19,7 +20,17 @@ import re
 from anony import (app, config, db, lang, logger,
                    queue, thumb, userbot, yt)
 from anony.helpers import Media, Track, buttons, utils
-from backend_prefs import get_primary
+
+
+async def _get_stream_link(vid_id: str, video: bool = False, provider: str = "nexgen", timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
+    """
+    Get streaming link from either NexGen or Shruti provider.
+    provider: "nexgen" or "shruti"
+    """
+    if provider == "shruti":
+        return await _shruti_get_stream_link(vid_id, video, timeout, poll_interval)
+    else:
+        return await _nexgen_get_stream_link(vid_id, video, timeout, poll_interval)
 
 
 async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
@@ -374,31 +385,26 @@ class TgCall(PyTgCalls):
 
         if not media.file_path:
             try:
-                # Get current mode to decide which provider to use
+                # Try to get streaming link based on current mode
+                from backend_prefs import get_primary
                 mode = get_primary()
                 
-                # Try streaming link based on current mode
-                stream_link = None
-                if mode in ("s", "shruti"):
-                    stream_link = await _shruti_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
-                    if stream_link:
-                        media.file_path = stream_link
-                        logger.info("Streaming via Shruti link for %s", media.id)
-                    else:
-                        logger.warning("Shruti streaming failed, falling back to download for %s", media.id)
-                else:
-                    # Default: try NexGen first
-                    stream_link = await _nexgen_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
-                    if stream_link:
-                        media.file_path = stream_link
-                        logger.info("Streaming via NexGen link for %s", media.id)
-                    else:
-                        logger.warning("NexGen streaming failed, falling back to download for %s", media.id)
+                # Determine provider based on mode
+                provider = "shruti" if mode in ("s", "shruti") else "nexgen"
                 
-                # Fallback to download if streaming failed
-                if not media.file_path:
+                stream_link = await _get_stream_link(
+                    media.id, 
+                    video=getattr(media, "video", False), 
+                    provider=provider,
+                    timeout=15, 
+                    poll_interval=3
+                )
+                
+                if stream_link:
+                    media.file_path = stream_link
+                    logger.info("Streaming via %s link for %s", provider.capitalize(), media.id)
+                else:
                     media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
-                    
             except Exception as e:
                 logger.warning("Error getting stream link, falling back to download: %s", e)
                 media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
