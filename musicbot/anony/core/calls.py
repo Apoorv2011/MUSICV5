@@ -1,4 +1,3 @@
-# anony/core/calls.py
 from typing import Optional
 
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
