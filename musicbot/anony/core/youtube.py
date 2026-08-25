@@ -22,11 +22,28 @@ JIOSAVAN_API_URL = os.getenv("JIOSAVAN_API_URL", "").rstrip("/")
 NEXGEN_API_URL = getattr(config, "API_URL", os.getenv("API_URL", "https://pvtz.nexgenbots.xyz")).rstrip("/")
 NEXGEN_VIDEO_API_URL = getattr(config, "VIDEO_API_URL", os.getenv("VIDEO_API_URL", "https://api.video.nexgenbots.xyz")).rstrip("/")
 NEXGEN_API_KEY = getattr(config, "API_KEY", os.getenv("API_KEY", ""))
+SHRUTI_API_URL = getattr(config, "SHRUTI_API_URL", os.getenv("SHRUTI_API_URL", "https://api.shrutibots.site")).rstrip("/")
+SHRUTI_API_KEY = getattr(config, "SHRUTI_API_KEY", os.getenv("SHRUTI_API_KEY", ""))
 # Channel used as DB for pre-uploaded tracks (adjust via config)
 ARC_DB_CHANNEL_ID = int(getattr(config, "ARC_DATABASE_ID", -1001677848376))
 
 DOWNLOAD_DIR = Path("downloads")
 DOWNLOAD_DIR.mkdir(exist_ok=True, parents=True)
+
+
+# --- Helper to Extract Video ID ---
+def extract_video_id(url_or_id: str) -> str:
+    """Extract YouTube video ID from URL or return as-is if already an ID"""
+    url_or_id = url_or_id.strip()
+    if len(url_or_id) == 11 and "http" not in url_or_id:
+        return url_or_id
+    if "v=" in url_or_id:
+        return url_or_id.split("v=")[-1].split("&")[0].split("#")[0]
+    if "youtu.be/" in url_or_id:
+        return url_or_id.split("youtu.be/")[-1].split("?")[0]
+    if "shorts/" in url_or_id:
+        return url_or_id.split("shorts/")[-1].split("?")[0]
+    return url_or_id
 
 
 # ----------------- JioSaavn helpers ------------------------------------------------
@@ -102,6 +119,64 @@ async def _nexgen_download(video_id: str, is_video: bool = False) -> Optional[st
         return result
     except Exception as e:
         logger.warning("NexGen download error for %s: %s", video_id, e)
+        return None
+
+
+# ----------------- Shruti API integration ----------------------
+
+async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
+    """
+    Download from Shruti API.
+    Accepts YouTube video IDs, YouTube URLs, YouTube Shorts URLs.
+    Returns file path if successful, None otherwise.
+    """
+    if not SHRUTI_API_URL or not SHRUTI_API_KEY:
+        logger.warning("Shruti config missing: SHRUTI_API_URL or SHRUTI_API_KEY not set")
+        return None
+    
+    try:
+        # Extract video ID from URL if needed
+        video_id = extract_video_id(video_id_or_url)
+        
+        media_type = "video" if is_video else "audio"
+        ext = "mp4" if is_video else "m4a"
+        filename = str(DOWNLOAD_DIR / f"{video_id}.{ext}")
+        
+        endpoint = f"{SHRUTI_API_URL}/download"
+        params = {
+            "url": video_id_or_url,  # Send original URL/ID to API
+            "type": media_type,
+            "api_key": SHRUTI_API_KEY
+        }
+        
+        logger.info("Shruti download starting: %s (type: %s)", video_id, media_type)
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                endpoint,
+                params=params,
+                timeout=aiohttp.ClientTimeout(total=300)
+            ) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    logger.warning("Shruti download HTTP %s for %s: %s", resp.status, video_id, text)
+                    return None
+                
+                with open(filename, "wb") as f:
+                    async for chunk in resp.content.iter_chunked(131072):
+                        if chunk:
+                            f.write(chunk)
+        
+        if os.path.exists(filename) and os.path.getsize(filename) > 0:
+            size_mb = os.path.getsize(filename) / (1024 * 1024)
+            logger.info("Shruti download successful: %s (%.2f MB)", filename, size_mb)
+            return filename
+        else:
+            logger.warning("Shruti download resulted in empty file for %s", video_id)
+            return None
+            
+    except Exception as e:
+        logger.warning("Shruti download error for %s: %s", video_id_or_url, e)
         return None
 
 
@@ -392,11 +467,15 @@ class YouTube:
         Modes:
           - 'jio' => JioSaavn (audio only)
           - 'yt'/'nexgen'/'arc' => NexGenBots (respect video flag)
+          - 's'/'shruti' => Shruti API (respect video flag, supports YouTube URLs and Shorts)
           - 'auto' => Telegram DB (exact id then title) -> yt-dlp fallback (respect video flag)
           - default => JioSaavn -> NexGen -> Telegram DB -> yt-dlp (respect video flag)
         """
         ext = "mp4" if video else "m4a"
-        filename = str(DOWNLOAD_DIR / f"{video_id}.{ext}")
+        
+        # Extract video ID for filename purposes
+        vid_for_file = extract_video_id(video_id)
+        filename = str(DOWNLOAD_DIR / f"{vid_for_file}.{ext}")
         if Path(filename).exists():
             return filename
 
@@ -425,9 +504,18 @@ class YouTube:
             logger.warning("NexGen download failed [yt/nexgen] for: %s", video_id)
             return None
 
-        # 3) Auto mode: prefer Telegram DB (CDN) then yt-dlp
+        # 3) Explicit Shruti / s (supports YouTube links, Shorts, and video IDs)
+        if mode in ("s", "shruti"):
+            out = await _shruti_download(video_id, is_video=video)
+            if out:
+                _schedule_delete(out)
+                return out
+            logger.warning("Shruti download failed [s/shruti] for: %s", video_id)
+            return None
+
+        # 4) Auto mode: prefer Telegram DB (CDN) then yt-dlp
         if mode == "auto":
-            tg_file = await _tg_channel_download_by_id(video_id, is_video=video)
+            tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)
             if tg_file:
                 _schedule_delete(tg_file)
                 return tg_file
@@ -444,7 +532,7 @@ class YouTube:
             logger.warning("All auto sources failed for: %s", video_id)
             return None
 
-        # 4) Default behavior: JioSaavn (audio-only) -> NexGen -> Telegram DB -> yt-dlp
+        # 5) Default behavior: JioSaavn (audio-only) -> NexGen -> Telegram DB -> yt-dlp
         if not video:
             url = await _jiosaavn_download(video_id)
             if url:
@@ -458,7 +546,7 @@ class YouTube:
             _schedule_delete(out)
             return out
 
-        tg_file = await _tg_channel_download_by_id(video_id, is_video=video)
+        tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)
         if tg_file:
             _schedule_delete(tg_file)
             return tg_file
