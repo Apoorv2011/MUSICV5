@@ -465,7 +465,10 @@ class YouTube:
         return bool(re.match(self.regex, url))
 
     def invalid(self, url: str) -> bool:
-        return bool(re.match(self.regex, url))
+        # FIX: this must be the logical negation of valid(), not a duplicate of it.
+        # Previously this returned True for VALID urls too, which caused checkUB()
+        # to reject every legitimate YouTube link with "play_not_found".
+        return not bool(re.match(self.regex, url))
 
     async def search(self, query: str, m_id: int, video: bool = False) -> Optional[Track]:
         mode = get_primary()
