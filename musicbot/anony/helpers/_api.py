@@ -1,8 +1,12 @@
 # anony/helpers/_api.py
-import re
+# Copyright (c) 2026 CyberPixelPro
+# Licensed under the MIT License.
+# This file is part of AviaxMusic
+
 import asyncio
-import aiohttp
+import re
 import aiofiles
+import aiohttp
 
 
 def extract_video_id(url_or_id: str) -> str:
@@ -99,6 +103,7 @@ class NexGenApi:
                     if status == "done":
                         if not dl_link:
                             return None
+                        # Downloads full CDN file locally
                         return await self.save_file(vid_id, dl_link, video)
                     elif status == "downloading":
                         await asyncio.sleep(4)
@@ -180,7 +185,7 @@ class ShrutiApi:
                         data = await resp.json()
                         status = data.get("status")
                         if status == "success":
-                            # Shruti direct download from backend
+                            # Downloads CDN file locally
                             return await self.save_file(vid_id, endp, video)
                     except Exception:
                         return await self.save_file(vid_id, endp, video)
