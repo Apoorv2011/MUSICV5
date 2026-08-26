@@ -20,6 +20,7 @@ import re
 from anony import (app, config, db, lang, logger,
                    queue, thumb, userbot, yt)
 from anony.helpers import Media, Track, buttons, utils
+from backend_prefs import get_primary
 
 
 async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
@@ -54,6 +55,37 @@ async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int
                 logger.debug("Error polling NexGen endpoint: %s", e)
             await asyncio.sleep(poll_interval)
     logger.debug("NexGen did not return a link for %s within timeout", vid_id)
+    return None
+
+
+async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
+    """Get streaming link from Shruti API"""
+    api_url = getattr(config, "SHRUTI_API_URL", None)
+    api_key = getattr(config, "SHRUTI_API_KEY", None)
+    
+    if not api_url or not api_key:
+        logger.debug("Shruti config missing: SHRUTI_API_URL or SHRUTI_API_KEY not set")
+        return None
+
+    media_type = "video" if video else "audio"
+    endpoint = f"{api_url.rstrip('/')}/download?url={vid_id}&type={media_type}&api_key={api_key}"
+    deadline = time.time() + timeout
+
+    timeout_cfg = aiohttp.ClientTimeout(total=10)
+    async with aiohttp.ClientSession(timeout=timeout_cfg) as session:
+        while time.time() < deadline:
+            try:
+                async with session.get(endpoint) as resp:
+                    if resp.status == 200:
+                        logger.debug("Shruti download link ready for vid=%s", vid_id)
+                        return endpoint
+                    else:
+                        logger.debug("Shruti returned HTTP %s for %s", resp.status, vid_id)
+            except Exception as e:
+                logger.debug("Error polling Shruti endpoint: %s", e)
+            await asyncio.sleep(poll_interval)
+    
+    logger.debug("Shruti did not return a link for %s within timeout", vid_id)
     return None
 
 
@@ -343,14 +375,33 @@ class TgCall(PyTgCalls):
 
         if not media.file_path:
             try:
-                stream_link = await _nexgen_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
-                if stream_link:
-                    media.file_path = stream_link
-                    logger.info("Streaming via NexGen link for %s", media.id)
+                # Get current mode to decide which provider to use
+                mode = get_primary()
+                
+                # Try streaming link based on current mode
+                stream_link = None
+                if mode in ("s", "shruti"):
+                    stream_link = await _shruti_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
+                    if stream_link:
+                        media.file_path = stream_link
+                        logger.info("Streaming via Shruti link for %s", media.id)
+                    else:
+                        logger.warning("Shruti streaming failed, falling back to download for %s", media.id)
                 else:
+                    # Default: try NexGen first
+                    stream_link = await _nexgen_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
+                    if stream_link:
+                        media.file_path = stream_link
+                        logger.info("Streaming via NexGen link for %s", media.id)
+                    else:
+                        logger.warning("NexGen streaming failed, falling back to download for %s", media.id)
+                
+                # Fallback to download if streaming failed
+                if not media.file_path:
                     media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
+                    
             except Exception as e:
-                logger.warning("Error getting NexGen stream link, falling back to download: %s", e)
+                logger.warning("Error getting stream link, falling back to download: %s", e)
                 media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
 
             if not media.file_path:

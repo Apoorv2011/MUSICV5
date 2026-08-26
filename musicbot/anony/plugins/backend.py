@@ -24,8 +24,26 @@ async def toggle_auto(_, message: types.Message):
     await message.reply_text("🎵 Backend: **Auto** (smart fallback)")
 
 
+@app.on_message(filters.command("s") & _OWNER)
+async def toggle_shruti(_, message: types.Message):
+    set_primary("s")
+    await message.reply_text("🎵 Backend: **Shruti API** (primary)")
+
+
+@app.on_message(filters.command("shruti") & _OWNER)
+async def toggle_shruti_full(_, message: types.Message):
+    set_primary("shruti")
+    await message.reply_text("🎵 Backend: **Shruti API** (primary)")
+
+
 @app.on_message(filters.command("backend") & _OWNER)
 async def backend_status(_, message: types.Message):
     current = get_primary()
-    labels = {"arc": "YouTube/Arc", "jio": "JioSaavn", "auto": "Auto (smart fallback)"}
+    labels = {
+        "arc": "YouTube/Arc (NexGen)", 
+        "jio": "JioSaavn", 
+        "auto": "Auto (smart fallback)",
+        "s": "Shruti API",
+        "shruti": "Shruti API"
+    }
     await message.reply_text(f"🎵 Current backend: **{labels.get(current, current)}**")
