@@ -119,7 +119,8 @@ async def _nexgen_download(video_id: str, is_video: bool = False) -> Optional[st
     if not client:
         return None
     try:
-        result = await client.download(video_id, video=is_video)
+        vid = extract_video_id(video_id)
+        result = await client.download(vid, video=is_video)
         return result
     except Exception as e:
         logger.warning("NexGen download error for %s: %s", video_id, e)
@@ -128,7 +129,7 @@ async def _nexgen_download(video_id: str, is_video: bool = False) -> Optional[st
 
 # ----------------- NubCoders provider (new) --------------------------------------
 
-async def _nubcoders_get_stream_link(video_id_or_url: str) -> Optional[str]:
+async def _nubcoders_get_stream_link(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
     """Return a direct stream URL from NubCoders /info without downloading."""
     if not NUBCODERS_API_URL or not NUBCODERS_TOKEN:
         logger.warning("NubCoders config missing: NUBCODERS_API_URL or NUBCODERS_TOKEN not set")
@@ -137,7 +138,7 @@ async def _nubcoders_get_stream_link(video_id_or_url: str) -> Optional[str]:
         vid = extract_video_id(video_id_or_url)
         watch_url = f"https://www.youtube.com/watch?v={vid}"
         endpoint = f"{NUBCODERS_API_URL.rstrip('/')}/info"
-        params = {"token": NUBCODERS_TOKEN, "q": watch_url}
+        params = {"token": NUBCODERS_TOKEN, "q": watch_url, "type": "video" if is_video else "audio"}
         async with aiohttp.ClientSession() as session:
             async with session.get(endpoint, params=params, timeout=aiohttp.ClientTimeout(total=20)) as resp:
                 if resp.status != 200:
@@ -164,9 +165,9 @@ async def _nubcoders_get_stream_link(video_id_or_url: str) -> Optional[str]:
 
 
 async def _nubcoders_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
-    """Optional fallback: query stream and download to local file (kept for parity)."""
+    """Optional fallback: query stream and download to local file."""
     try:
-        stream = await _nubcoders_get_stream_link(video_id_or_url)
+        stream = await _nubcoders_get_stream_link(video_id_or_url, is_video=is_video)
         if not stream:
             return None
         vid = extract_video_id(video_id_or_url)
@@ -181,23 +182,19 @@ async def _nubcoders_download(video_id_or_url: str, is_video: bool = False) -> O
 # ----------------- Shruti API integration ----------------------
 
 async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
-    """
-    Download from Shruti API. We pass plain 11-char ID as the 'url' param.
-    """
+    """Download from Shruti API using clean 11-char ID."""
     if not SHRUTI_API_URL or not SHRUTI_API_KEY:
         logger.warning("Shruti config missing: SHRUTI_API_URL or SHRUTI_API_KEY not set")
         return None
 
     try:
         vid = extract_video_id(video_id_or_url)
-        api_param = vid
-
         media_type = "video" if is_video else "audio"
         ext = "mp4" if is_video else "m4a"
         filename = str(DOWNLOAD_DIR / f"{vid}.{ext}")
 
         endpoint = f"{SHRUTI_API_URL.rstrip('/')}/download"
-        params = {"url": api_param, "type": media_type, "api_key": SHRUTI_API_KEY}
+        params = {"url": vid, "type": media_type, "api_key": SHRUTI_API_KEY}
 
         logger.info("Shruti download starting: %s (type: %s) -> %s", vid, media_type, endpoint)
 
@@ -246,8 +243,9 @@ def _schedule_delete(filepath: str, delay: int = 300) -> None:
     def _worker():
         sleep(delay)
         try:
-            os.remove(filepath)
-            logger.info("Cache cleanup: removed %s", filepath)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                logger.info("Cache cleanup: removed %s", filepath)
         except Exception:
             pass
     threading.Thread(target=_worker, daemon=True).start()
@@ -269,35 +267,33 @@ async def _ffmpeg_extract_audio(input_path: str, out_path: str) -> bool:
 
 async def _tg_channel_download_by_id(video_id: str, is_video: bool = False) -> Optional[str]:
     """Search Telegram DB channel for exact ID and download matching audio/video."""
-    if not video_id:
+    vid = extract_video_id(video_id)
+    if not vid:
         return None
     client = userbot.clients[0] if userbot.clients else app
     try:
         ub_client = getattr(client, "app", client)
-        async for msg in ub_client.search_messages(chat_id=ARC_DB_CHANNEL_ID, query=video_id, limit=10):
+        async for msg in ub_client.search_messages(chat_id=ARC_DB_CHANNEL_ID, query=vid, limit=10):
             caption_text = (msg.caption or msg.text or "")
-            if video_id in caption_text and (msg.audio or msg.document or msg.voice or msg.video):
-                logger.info("Found EXACT Track ID match '%s' in DB channel. Downloading...", video_id)
-                # If audio requested and an audio/document exists, download it
+            if vid in caption_text and (msg.audio or msg.document or msg.voice or msg.video):
+                logger.info("Found EXACT Track ID match '%s' in DB channel. Downloading...", vid)
                 if not is_video and (msg.audio or msg.document or msg.voice):
                     media = msg.audio or msg.document or msg.voice
                     ext = "m4a" if getattr(media, "mime_type", "").startswith("audio") or getattr(media, "file_name", "").endswith(".m4a") else "mp3"
-                    out_name = DOWNLOAD_DIR / f"{video_id}.{ext}"
+                    out_name = DOWNLOAD_DIR / f"{vid}.{ext}"
                     file_path = await ub_client.download_media(msg, file_name=str(out_name))
                     if file_path and os.path.exists(file_path):
                         return file_path
-                # If video requested and msg.video exists, download video
                 if is_video and msg.video:
-                    out_name = DOWNLOAD_DIR / f"{video_id}.mp4"
+                    out_name = DOWNLOAD_DIR / f"{vid}.mp4"
                     file_path = await ub_client.download_media(msg, file_name=str(out_name))
                     if file_path and os.path.exists(file_path):
                         return file_path
-                # If audio requested but only video available, download video then extract
                 if not is_video and msg.video:
-                    temp_video = DOWNLOAD_DIR / f"{video_id}.temp"
+                    temp_video = DOWNLOAD_DIR / f"{vid}.temp"
                     file_path = await ub_client.download_media(msg, file_name=str(temp_video))
                     if file_path and os.path.exists(file_path):
-                        audio_out = DOWNLOAD_DIR / f"{video_id}.m4a"
+                        audio_out = DOWNLOAD_DIR / f"{vid}.m4a"
                         ok = await _ffmpeg_extract_audio(str(temp_video), str(audio_out))
                         try:
                             os.remove(temp_video)
@@ -306,7 +302,7 @@ async def _tg_channel_download_by_id(video_id: str, is_video: bool = False) -> O
                         if ok and os.path.exists(audio_out):
                             return str(audio_out)
     except Exception as e:
-        logger.warning("TG DB exact search error for ID '%s': %s", video_id, e)
+        logger.warning("TG DB exact search error for ID '%s': %s", vid, e)
     return None
 
 
@@ -318,7 +314,6 @@ async def _tg_channel_download_by_title(title: str, is_video: bool = False) -> O
         ub_client = getattr(client, "app", client)
         async for msg in ub_client.search_messages(chat_id=ARC_DB_CHANNEL_ID, query=title, limit=15):
             caption_text = (msg.caption or msg.text or "").lower()
-            # skip likely non-official variants
             if any(x in caption_text for x in ["cover", "speed up", "slowed", "lyrics", "remix"]):
                 continue
             if not is_video and (msg.audio or msg.document or msg.voice):
@@ -357,11 +352,6 @@ def _sanitize_for_filename(s: str) -> str:
 
 
 async def _yt_dlp_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
-    """
-    Run yt-dlp in a background thread to download audio/video locally.
-    Uses cookie file if available (local anony/cookies/*.txt or config.COOKIES_URL).
-    """
-    # choose cookiefile: prefer local anony/cookies/*.txt
     cookiefile = None
     local_cookie_dir = Path("anony/cookies")
     if local_cookie_dir.exists() and local_cookie_dir.is_dir():
@@ -370,7 +360,6 @@ async def _yt_dlp_download(video_id_or_url: str, is_video: bool = False) -> Opti
                 cookiefile = str(f)
                 break
 
-    # fallback: try config.COOKIES_URL (list already parsed in config) and download first successful
     if not cookiefile and getattr(config, "COOKIES_URL", None):
         for url in config.COOKIES_URL:
             if not url:
@@ -389,8 +378,9 @@ async def _yt_dlp_download(video_id_or_url: str, is_video: bool = False) -> Opti
                 continue
 
     loop = asyncio.get_event_loop()
-    safe_name = _sanitize_for_filename(video_id_or_url)
-    return await loop.run_in_executor(None, _yt_dlp_sync, video_id_or_url, is_video, cookiefile, safe_name)
+    vid = extract_video_id(video_id_or_url)
+    safe_name = _sanitize_for_filename(vid)
+    return await loop.run_in_executor(None, _yt_dlp_sync, vid, is_video, cookiefile, safe_name)
 
 
 def _yt_dlp_sync(video_id_or_url: str, is_video: bool, cookiefile: Optional[str], safe_name: str) -> Optional[str]:
@@ -425,7 +415,6 @@ def _yt_dlp_sync(video_id_or_url: str, is_video: bool, cookiefile: Optional[str]
             fname = str(DOWNLOAD_DIR / f"{safe_name}.{ext}")
             if os.path.exists(fname):
                 return fname
-            # fallback: find matching file in downloads
             for f in os.listdir(DOWNLOAD_DIR):
                 if safe_name in f or (info.get("id") and info.get("id") in f):
                     if f.endswith((".mp4", ".m4a", ".webm", ".mp3")):
@@ -495,7 +484,6 @@ class YouTube:
                     view_count="",
                     video=False,
                 )
-        # default to YouTube metadata for other modes
         return await _yt_search_meta(query, m_id, video)
 
     async def playlist(self, limit: int, user: str, url: str, video: bool) -> list[Optional[Track]]:
@@ -523,73 +511,57 @@ class YouTube:
         return tracks
 
     async def download(self, video_id: str, video: bool = False, title: Optional[str] = None) -> Optional[str]:
-        """
-        Modes:
-          - 'jio' => JioSaavn (audio only)
-          - 'yt'/'nexgen'/'arc' => NexGenBots (respect video flag)
-          - 's'/'shruti' => Shruti API (respect video flag)
-          - 'nub'/'n' => NubCoders (stream resolver service) — returns stream URL when possible
-          - 'auto' => Telegram DB (exact id then title) -> yt-dlp fallback (respect video flag)
-          - default => JioSaavn -> NexGen -> Telegram DB -> yt-dlp (respect video flag)
-        """
-        ext = "mp4" if video else "m4a"
-        
-        # Extract video ID for filename purposes
         vid_for_file = extract_video_id(video_id)
+        ext = "mp4" if video else "m4a"
         filename = str(DOWNLOAD_DIR / f"{vid_for_file}.{ext}")
         if Path(filename).exists():
             return filename
 
         mode = get_primary()
 
-        # 1) Explicit JioSaavn (audio-only)
+        # 1) JioSaavn (/jio) - Audio Only
         if mode == "jio":
-            if video:
-                logger.warning("JioSaavn mode requested but video requested; JioSaavn provides audio only. Falling back to audio.")
-            url = await _jiosaavn_download(video_id)
+            url = await _jiosaavn_download(vid_for_file)
             if url:
                 out = await _download_via_url_to_file(url, filename)
                 if out:
                     _schedule_delete(out)
                     return out
-            logger.warning("JioSaavn download failed [jio] for: %s", video_id)
+            logger.warning("JioSaavn download failed [jio] for: %s", vid_for_file)
             return None
 
-        # 2) Explicit NexGen / yt
+        # 2) NexGenBots (/y)
         if mode in ("yt", "nexgen", "arc", "y"):
-            out = await _nexgen_download(video_id, is_video=video)
+            out = await _nexgen_download(vid_for_file, is_video=video)
             if out:
-                # NexGen may return stream URL or local path; return as-is
-                _schedule_delete(out) if os.path.exists(out) else None
+                if os.path.exists(out):
+                    _schedule_delete(out)
                 return out
-            logger.warning("NexGen download failed [yt/nexgen] for: %s", video_id)
+            logger.warning("NexGen download failed [yt/nexgen] for: %s", vid_for_file)
             return None
 
-        # 3) Explicit Shruti / s (supports YouTube links, Shorts, and video IDs)
+        # 3) Shruti API (/s)
         if mode in ("s", "shruti"):
-            out = await _shruti_download(video_id, is_video=video)
+            out = await _shruti_download(vid_for_file, is_video=video)
             if out:
                 _schedule_delete(out)
                 return out
-            logger.warning("Shruti download failed [s/shruti] for: %s", video_id)
+            logger.warning("Shruti download failed [s/shruti] for: %s", vid_for_file)
             return None
 
-        # 4) Explicit NubCoders / n (stream resolver)
+        # 4) NubCoders (/n) - Direct Stream Link or Local Download
         if mode in ("n", "nub", "nubcoders"):
-            # First try to obtain a stream URL without downloading
-            stream = await _nubcoders_get_stream_link(video_id)
+            stream = await _nubcoders_get_stream_link(vid_for_file, is_video=video)
             if stream:
-                # Return the stream URL (caller will accept remote URL)
                 return stream
-            # Fallback: attempt to download via nubcoders to local file
-            out = await _nubcoders_download(video_id, is_video=video)
+            out = await _nubcoders_download(vid_for_file, is_video=video)
             if out:
                 _schedule_delete(out)
                 return out
-            logger.warning("NubCoders download failed [nub] for: %s", video_id)
+            logger.warning("NubCoders download failed [nub] for: %s", vid_for_file)
             return None
 
-        # 5) Auto mode: prefer Telegram DB (CDN) then yt-dlp
+        # 5) Auto Mode (/auto) - Fallback Sequence: Telegram CDN -> Shruti -> NubCoders -> yt-dlp
         if mode == "auto":
             tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)
             if tg_file:
@@ -600,26 +572,29 @@ class YouTube:
                 if tg_file_t:
                     _schedule_delete(tg_file_t)
                     return tg_file_t
-            # fallback to yt-dlp
-            ytd = await _yt_dlp_download(video_id, is_video=video)
+
+            shruti_out = await _shruti_download(vid_for_file, is_video=video)
+            if shruti_out:
+                _schedule_delete(shruti_out)
+                return shruti_out
+
+            nub_stream = await _nubcoders_get_stream_link(vid_for_file, is_video=video)
+            if nub_stream:
+                return nub_stream
+
+            ytd = await _yt_dlp_download(vid_for_file, is_video=video)
             if ytd:
                 _schedule_delete(ytd)
                 return ytd
-            logger.warning("All auto sources failed for: %s", video_id)
+
+            logger.warning("All auto sources failed for: %s", vid_for_file)
             return None
 
-        # 6) Default behavior: JioSaavn (audio-only) -> NexGen -> Telegram DB -> yt-dlp
-        if not video:
-            url = await _jiosaavn_download(video_id)
-            if url:
-                out = await _download_via_url_to_file(url, filename)
-                if out:
-                    _schedule_delete(out)
-                    return out
-
-        out = await _nexgen_download(video_id, is_video=video)
+        # 6) Default Fallback
+        out = await _nexgen_download(vid_for_file, is_video=video)
         if out:
-            _schedule_delete(out) if os.path.exists(out) else None
+            if os.path.exists(out):
+                _schedule_delete(out)
             return out
 
         tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)
@@ -627,18 +602,12 @@ class YouTube:
             _schedule_delete(tg_file)
             return tg_file
 
-        if title:
-            tg_file_t = await _tg_channel_download_by_title(title, is_video=video)
-            if tg_file_t:
-                _schedule_delete(tg_file_t)
-                return tg_file_t
-
-        ytd = await _yt_dlp_download(video_id, is_video=video)
+        ytd = await _yt_dlp_download(vid_for_file, is_video=video)
         if ytd:
             _schedule_delete(ytd)
             return ytd
 
-        logger.warning("All sources failed [default] for: %s", video_id)
+        logger.warning("All sources failed [default] for: %s", vid_for_file)
         return None
 
 
