@@ -68,24 +68,93 @@ async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int
         return None
 
     media_type = "video" if video else "audio"
-    endpoint = f"{api_url.rstrip('/')}/download?url={vid_id}&type={media_type}&api_key={api_key}"
+    endpoint = f"{api_url.rstrip('/')}/download"
     deadline = time.time() + timeout
 
     timeout_cfg = aiohttp.ClientTimeout(total=10)
     async with aiohttp.ClientSession(timeout=timeout_cfg) as session:
         while time.time() < deadline:
             try:
-                async with session.get(endpoint) as resp:
-                    if resp.status == 200:
-                        logger.debug("Shruti download link ready for vid=%s", vid_id)
-                        return endpoint
-                    else:
-                        logger.debug("Shruti returned HTTP %s for %s", resp.status, vid_id)
+                # Normalize vid param: if it's an 11-char id, send full watch URL
+                vid_param = vid_id
+                if isinstance(vid_id, str) and len(vid_id.strip()) == 11 and "http" not in vid_id:
+                    vid_param = f"https://www.youtube.com/watch?v={vid_id}"
+
+                params = {"url": vid_param, "type": media_type, "api_key": api_key}
+                async with session.get(endpoint, params=params) as resp:
+                    logger.debug("Shruti GET %s params=%s -> HTTP %s", endpoint, params, resp.status)
+                    ctype = resp.headers.get("Content-Type", "")
+
+                    # JSON response: check for link/status
+                    if resp.status == 200 and "application/json" in ctype:
+                        try:
+                            data = await resp.json()
+                        except Exception as e:
+                            logger.debug("Shruti JSON parse error: %s", e)
+                            data = None
+
+                        if data:
+                            status = data.get("status")
+                            link = data.get("link") or data.get("url") or None
+                            logger.debug("Shruti JSON status=%s link=%s", status, bool(link))
+                            if link:
+                                if link.startswith("/"):
+                                    link = urljoin(api_url, link)
+                                return link
+                            # else continue polling (processing)
+
+                    # If response is direct media bytes, return encoded endpoint (streamable)
+                    if resp.status == 200 and any(x in ctype for x in ("audio/", "video/", "application/octet-stream")):
+                        try:
+                            from yarl import URL
+                            full = str(URL(endpoint).with_query(params))
+                            logger.debug("Shruti direct content available for %s; returning %s", vid_id, full)
+                            return full
+                        except Exception:
+                            # fallback: build a naive encoded string (shouldn't usually be needed)
+                            from urllib.parse import urlencode
+                            full = endpoint + "?" + urlencode(params)
+                            return full
+
+                    logger.debug("Shruti not ready for %s (HTTP %s, Content-Type=%s)", vid_id, resp.status, ctype)
             except Exception as e:
                 logger.debug("Error polling Shruti endpoint: %s", e)
             await asyncio.sleep(poll_interval)
-    
+
     logger.debug("Shruti did not return a link for %s within timeout", vid_id)
+    return None
+
+
+async def _shruti_get_stream_link_old(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
+    # kept for reference if needed; original behavior used string concatenation
+    api_key = getattr(config, "API_KEY", None)
+    if not api_key:
+        return None
+    base = config.VIDEO_API_URL if video else config.API_URL
+    if not base:
+        return None
+    endpoint = f"{base.rstrip('/')}/{'video' if video else 'song'}/{vid_id}?api={api_key}"
+    deadline = time.time() + timeout
+    timeout_cfg = aiohttp.ClientTimeout(total=10)
+    async with aiohttp.ClientSession(timeout=timeout_cfg) as session:
+        while time.time() < deadline:
+            try:
+                async with session.get(endpoint) as resp:
+                    if resp.status != 200:
+                        logger.debug("NexGen returned HTTP %s for %s", resp.status, endpoint)
+                    else:
+                        data = await resp.json()
+                        status = data.get("status")
+                        link = data.get("link")
+                        logger.debug("NexGen status=%s for vid=%s", status, vid_id)
+                        if status == "done" and link:
+                            if link.startswith("/"):
+                                link = urljoin(base, link)
+                            return link
+            except Exception as e:
+                logger.debug("Error polling NexGen endpoint: %s", e)
+            await asyncio.sleep(poll_interval)
+    logger.debug("NexGen did not return a link for %s within timeout", vid_id)
     return None
 
 
