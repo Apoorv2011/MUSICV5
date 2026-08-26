@@ -59,10 +59,10 @@ async def _nexgen_get_stream_link(vid_id: str, video: bool = False, timeout: int
 
 
 async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
-    """Get streaming link from Shruti API"""
+    """Get streaming link from Shruti API (pass video ID only)."""
     api_url = getattr(config, "SHRUTI_API_URL", None)
     api_key = getattr(config, "SHRUTI_API_KEY", None)
-    
+
     if not api_url or not api_key:
         logger.debug("Shruti config missing: SHRUTI_API_URL or SHRUTI_API_KEY not set")
         return None
@@ -75,18 +75,20 @@ async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int
     async with aiohttp.ClientSession(timeout=timeout_cfg) as session:
         while time.time() < deadline:
             try:
-                # Normalize vid param: if it's an 11-char id, send full watch URL
-                vid_param = vid_id
-                if isinstance(vid_id, str) and len(vid_id.strip()) == 11 and "http" not in vid_id:
-                    vid_param = f"https://www.youtube.com/watch?v={vid_id}"
+                vid_only = vid_id
+                # ensure we only pass the 11-char id
+                try:
+                    from anony.core.youtube import extract_video_id as _eid
+                    vid_only = _eid(vid_id)
+                except Exception:
+                    pass
 
-                params = {"url": vid_param, "type": media_type, "api_key": api_key}
+                params = {"url": vid_only, "type": media_type, "api_key": api_key}
                 async with session.get(endpoint, params=params) as resp:
                     logger.debug("Shruti GET %s params=%s -> HTTP %s", endpoint, params, resp.status)
                     ctype = resp.headers.get("Content-Type", "")
 
-                    # JSON response: check for link/status
-                    if resp.status == 200 and "application/json" in ctype:
+                    if resp.status == 200 and "application/json" in (ctype or ""):
                         try:
                             data = await resp.json()
                         except Exception as e:
@@ -101,22 +103,18 @@ async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int
                                 if link.startswith("/"):
                                     link = urljoin(api_url, link)
                                 return link
-                            # else continue polling (processing)
 
-                    # If response is direct media bytes, return encoded endpoint (streamable)
-                    if resp.status == 200 and any(x in ctype for x in ("audio/", "video/", "application/octet-stream")):
+                    if resp.status == 200 and any(x in (ctype or "") for x in ("audio/", "video/", "application/octet-stream")):
                         try:
                             from yarl import URL
                             full = str(URL(endpoint).with_query(params))
-                            logger.debug("Shruti direct content available for %s; returning %s", vid_id, full)
+                            logger.debug("Shruti direct content available for %s; returning %s", vid_only, full)
                             return full
                         except Exception:
-                            # fallback: build a naive encoded string (shouldn't usually be needed)
                             from urllib.parse import urlencode
-                            full = endpoint + "?" + urlencode(params)
-                            return full
+                            return endpoint + "?" + urlencode(params)
 
-                    logger.debug("Shruti not ready for %s (HTTP %s, Content-Type=%s)", vid_id, resp.status, ctype)
+                    logger.debug("Shruti not ready for %s (HTTP %s, Content-Type=%s)", vid_only, resp.status, ctype)
             except Exception as e:
                 logger.debug("Error polling Shruti endpoint: %s", e)
             await asyncio.sleep(poll_interval)
@@ -125,37 +123,49 @@ async def _shruti_get_stream_link(vid_id: str, video: bool = False, timeout: int
     return None
 
 
-async def _shruti_get_stream_link_old(vid_id: str, video: bool = False, timeout: int = 20, poll_interval: int = 3) -> Optional[str]:
-    # kept for reference if needed; original behavior used string concatenation
-    api_key = getattr(config, "API_KEY", None)
-    if not api_key:
+async def _nubcoders_get_stream_link(video_id_or_url: str, timeout: int = 15) -> Optional[str]:
+    """Use NubCoders /info to obtain a stream_url and return it (no download)."""
+    api_url = getattr(config, "NUBCODERS_API_URL", None) or getattr(config, "NUBCODERS_API", None) or None
+    token = getattr(config, "NUBCODERS_TOKEN", None)
+    # Also allow env fallback if config not populated
+    if not api_url:
+        import os
+        api_url = os.getenv("NUBCODERS_API_URL")
+    if not token:
+        import os
+        token = os.getenv("NUBCODERS_TOKEN")
+    if not api_url or not token:
+        logger.debug("NubCoders config missing")
         return None
-    base = config.VIDEO_API_URL if video else config.API_URL
-    if not base:
-        return None
-    endpoint = f"{base.rstrip('/')}/{'video' if video else 'song'}/{vid_id}?api={api_key}"
-    deadline = time.time() + timeout
-    timeout_cfg = aiohttp.ClientTimeout(total=10)
+    try:
+        from anony.core.youtube import extract_video_id as _eid
+        vid = _eid(video_id_or_url)
+    except Exception:
+        vid = (video_id_or_url or "").strip()
+    watch_url = f"https://www.youtube.com/watch?v={vid}"
+    endpoint = f"{api_url.rstrip('/')}/info"
+    params = {"token": token, "q": watch_url}
+    timeout_cfg = aiohttp.ClientTimeout(total=timeout)
     async with aiohttp.ClientSession(timeout=timeout_cfg) as session:
-        while time.time() < deadline:
-            try:
-                async with session.get(endpoint) as resp:
-                    if resp.status != 200:
-                        logger.debug("NexGen returned HTTP %s for %s", resp.status, endpoint)
-                    else:
-                        data = await resp.json()
-                        status = data.get("status")
-                        link = data.get("link")
-                        logger.debug("NexGen status=%s for vid=%s", status, vid_id)
-                        if status == "done" and link:
-                            if link.startswith("/"):
-                                link = urljoin(base, link)
-                            return link
-            except Exception as e:
-                logger.debug("Error polling NexGen endpoint: %s", e)
-            await asyncio.sleep(poll_interval)
-    logger.debug("NexGen did not return a link for %s within timeout", vid_id)
-    return None
+        try:
+            async with session.get(endpoint, params=params) as resp:
+                logger.debug("NubCoders GET %s params=%s -> HTTP %s", endpoint, params, resp.status)
+                if resp.status != 200:
+                    txt = await resp.text()
+                    logger.debug("NubCoders returned non-200: %s", txt)
+                    return None
+                try:
+                    data = await resp.json()
+                except Exception:
+                    logger.debug("NubCoders returned non-json")
+                    return None
+                stream = data.get("stream_url") or data.get("streamUrl") or data.get("url") or data.get("stream")
+                if stream and stream.startswith("/"):
+                    stream = urljoin(api_url, stream)
+                return stream
+        except Exception as e:
+            logger.debug("NubCoders get stream error: %s", e)
+            return None
 
 
 def _build_user_mention(media) -> str:
@@ -446,7 +456,7 @@ class TgCall(PyTgCalls):
             try:
                 # Get current mode to decide which provider to use
                 mode = get_primary()
-                
+
                 # Try streaming link based on current mode
                 stream_link = None
                 if mode in ("s", "shruti"):
@@ -456,6 +466,13 @@ class TgCall(PyTgCalls):
                         logger.info("Streaming via Shruti link for %s", media.id)
                     else:
                         logger.warning("Shruti streaming failed, falling back to download for %s", media.id)
+                elif mode in ("n", "nub", "nubcoders"):
+                    stream_link = await _nubcoders_get_stream_link(media.id, timeout=15)
+                    if stream_link:
+                        media.file_path = stream_link
+                        logger.info("Streaming via NubCoders stream URL for %s", media.id)
+                    else:
+                        logger.warning("NubCoders stream lookup failed, falling back to download for %s", media.id)
                 else:
                     # Default: try NexGen first
                     stream_link = await _nexgen_get_stream_link(media.id, video=getattr(media, "video", False), timeout=15, poll_interval=3)
@@ -464,11 +481,11 @@ class TgCall(PyTgCalls):
                         logger.info("Streaming via NexGen link for %s", media.id)
                     else:
                         logger.warning("NexGen streaming failed, falling back to download for %s", media.id)
-                
+
                 # Fallback to download if streaming failed
                 if not media.file_path:
                     media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
-                    
+
             except Exception as e:
                 logger.warning("Error getting stream link, falling back to download: %s", e)
                 media.file_path = await yt.download(media.id, video=getattr(media, "video", False), title=getattr(media, "title", None))
