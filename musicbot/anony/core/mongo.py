@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 from random import randint
 from time import time
 
@@ -44,6 +39,10 @@ class MongoDB:
         self.users = []
         self.usersdb = self.db.users
         self.favoritesdb = self.db.favorites
+        self.autoplaydb = self.db.autoplay
+        self.thumbnaildb = self.db.thumbnail
+        self.autoplay = {}
+        self.thumbnail = {}
 
     async def connect(self) -> None:
         """Check if we can connect to the database.
@@ -91,6 +90,51 @@ class MongoDB:
 
     async def set_loop(self, chat_id: int, count: int) -> None:
         self.loop[chat_id] = count
+
+    # PLAYER PREFERENCES
+    async def get_autoplay(self, chat_id: int) -> bool:
+        if chat_id not in self.autoplay:
+            doc = await self.autoplaydb.find_one({"_id": chat_id})
+            self.autoplay[chat_id] = True if doc is None else bool(doc.get("enabled", True))
+        return self.autoplay[chat_id]
+
+    async def set_autoplay(self, chat_id: int, enabled: bool) -> None:
+        enabled = bool(enabled)
+        self.autoplay[chat_id] = enabled
+        await self.autoplaydb.update_one(
+            {"_id": chat_id},
+            {"$set": {"enabled": enabled}},
+            upsert=True,
+        )
+
+    async def toggle_autoplay(self, chat_id: int) -> bool:
+        enabled = not await self.get_autoplay(chat_id)
+        await self.set_autoplay(chat_id, enabled)
+        return enabled
+
+    async def get_thumbnail(self, chat_id: int) -> bool:
+        if chat_id not in self.thumbnail:
+            doc = await self.thumbnaildb.find_one({"_id": chat_id})
+            self.thumbnail[chat_id] = (
+                getattr(config, "THUMB_GEN", True)
+                if doc is None
+                else bool(doc.get("enabled", True))
+            )
+        return self.thumbnail[chat_id]
+
+    async def set_thumbnail(self, chat_id: int, enabled: bool) -> None:
+        enabled = bool(enabled)
+        self.thumbnail[chat_id] = enabled
+        await self.thumbnaildb.update_one(
+            {"_id": chat_id},
+            {"$set": {"enabled": enabled}},
+            upsert=True,
+        )
+
+    async def toggle_thumbnail(self, chat_id: int) -> bool:
+        enabled = not await self.get_thumbnail(chat_id)
+        await self.set_thumbnail(chat_id, enabled)
+        return enabled
 
     # AUTH METHODS
     async def _get_auth(self, chat_id: int) -> set[int]:
