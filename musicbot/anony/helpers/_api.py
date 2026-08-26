@@ -1,8 +1,19 @@
+# anony/helpers/_api.py
 import re
 import asyncio
-
 import aiohttp
 import aiofiles
+
+
+def extract_video_id(url_or_id: str) -> str:
+    """Extracts 11-character YouTube video ID from raw input or full URLs."""
+    if not url_or_id:
+        return ""
+    regex = r"(?:v=|\/([0-9A-Za-z_-]{11}).*|youtu\.be\/([0-9A-Za-z_-]{11}))"
+    match = re.search(regex, str(url_or_id))
+    if match:
+        return match.group(1) or match.group(2)
+    return str(url_or_id).strip()
 
 
 class NexGenApi:
@@ -62,6 +73,7 @@ class NexGenApi:
         return None
 
     async def download(self, vid_id: str, video: bool = False) -> str | None:
+        vid_id = extract_video_id(vid_id)
         if video and vid_id in self.v_cache:
             return self.v_cache[vid_id]
         elif not video and vid_id in self.dl_cache:
@@ -147,6 +159,7 @@ class ShrutiApi:
         return None
 
     async def download(self, vid_id: str, video: bool = False) -> str | None:
+        vid_id = extract_video_id(vid_id)
         if video and vid_id in self.v_cache:
             return self.v_cache[vid_id]
         elif not video and vid_id in self.dl_cache:
@@ -167,6 +180,7 @@ class ShrutiApi:
                         data = await resp.json()
                         status = data.get("status")
                         if status == "success":
+                            # Shruti direct download from backend
                             return await self.save_file(vid_id, endp, video)
                     except Exception:
                         return await self.save_file(vid_id, endp, video)
