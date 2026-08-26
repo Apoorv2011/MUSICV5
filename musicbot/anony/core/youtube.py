@@ -24,6 +24,10 @@ NEXGEN_VIDEO_API_URL = getattr(config, "VIDEO_API_URL", os.getenv("VIDEO_API_URL
 NEXGEN_API_KEY = getattr(config, "API_KEY", os.getenv("API_KEY", ""))
 SHRUTI_API_URL = getattr(config, "SHRUTI_API_URL", os.getenv("SHRUTI_API_URL", "https://api.shrutibots.site")).rstrip("/")
 SHRUTI_API_KEY = getattr(config, "SHRUTI_API_KEY", os.getenv("SHRUTI_API_KEY", ""))
+# New provider: NubCoders (stream resolver)
+NUBCODERS_API_URL = getattr(config, "NUBCODERS_API_URL", os.getenv("NUBCODERS_API_URL", "https://api.nubcoders.com")).rstrip("/")
+NUBCODERS_TOKEN = getattr(config, "NUBCODERS_TOKEN", os.getenv("NUBCODERS_TOKEN", ""))
+
 # Channel used as DB for pre-uploaded tracks (adjust via config)
 ARC_DB_CHANNEL_ID = int(getattr(config, "ARC_DATABASE_ID", -1001677848376))
 
@@ -34,7 +38,7 @@ DOWNLOAD_DIR.mkdir(exist_ok=True, parents=True)
 # --- Helper to Extract Video ID ---
 def extract_video_id(url_or_id: str) -> str:
     """Extract YouTube video ID from URL or return as-is if already an ID"""
-    url_or_id = url_or_id.strip()
+    url_or_id = (url_or_id or "").strip()
     if len(url_or_id) == 11 and "http" not in url_or_id:
         return url_or_id
     if "v=" in url_or_id:
@@ -122,54 +126,90 @@ async def _nexgen_download(video_id: str, is_video: bool = False) -> Optional[st
         return None
 
 
+# ----------------- NubCoders provider (new) --------------------------------------
+
+async def _nubcoders_get_stream_link(video_id_or_url: str) -> Optional[str]:
+    """Return a direct stream URL from NubCoders /info without downloading."""
+    if not NUBCODERS_API_URL or not NUBCODERS_TOKEN:
+        logger.warning("NubCoders config missing: NUBCODERS_API_URL or NUBCODERS_TOKEN not set")
+        return None
+    try:
+        vid = extract_video_id(video_id_or_url)
+        watch_url = f"https://www.youtube.com/watch?v={vid}"
+        endpoint = f"{NUBCODERS_API_URL.rstrip('/')}/info"
+        params = {"token": NUBCODERS_TOKEN, "q": watch_url}
+        async with aiohttp.ClientSession() as session:
+            async with session.get(endpoint, params=params, timeout=aiohttp.ClientTimeout(total=20)) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    logger.warning("NubCoders info HTTP %s for %s: %s", resp.status, vid, text)
+                    return None
+                try:
+                    data = await resp.json()
+                except Exception:
+                    logger.warning("NubCoders returned non-JSON for %s", vid)
+                    return None
+                stream = data.get("stream_url") or data.get("streamUrl") or data.get("url") or data.get("stream")
+                if not stream:
+                    logger.warning("NubCoders did not return stream_url for %s: %s", vid, data)
+                    return None
+                if stream.startswith("/"):
+                    from urllib.parse import urljoin
+                    stream = urljoin(NUBCODERS_API_URL, stream)
+                logger.info("NubCoders returned stream for %s", vid)
+                return stream
+    except Exception as e:
+        logger.warning("NubCoders error for %s: %s", video_id_or_url, e)
+        return None
+
+
+async def _nubcoders_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
+    """Optional fallback: query stream and download to local file (kept for parity)."""
+    try:
+        stream = await _nubcoders_get_stream_link(video_id_or_url)
+        if not stream:
+            return None
+        vid = extract_video_id(video_id_or_url)
+        ext = "mp4" if is_video else "m4a"
+        filename = str(DOWNLOAD_DIR / f"{vid}.{ext}")
+        out = await _download_via_url_to_file(stream, filename)
+        return out
+    except Exception:
+        return None
+
+
 # ----------------- Shruti API integration ----------------------
 
 async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Optional[str]:
     """
-    Download from Shruti API.
-    Accepts YouTube video IDs, YouTube URLs, YouTube Shorts URLs.
-    Returns file path if successful, None otherwise.
+    Download from Shruti API. We pass plain 11-char ID as the 'url' param.
     """
     if not SHRUTI_API_URL or not SHRUTI_API_KEY:
         logger.warning("Shruti config missing: SHRUTI_API_URL or SHRUTI_API_KEY not set")
         return None
-    
+
     try:
-        # Extract video ID and normalize to full URL if caller provided only an ID
-        orig = (video_id_or_url or "").strip()
-        vid = extract_video_id(orig)
-        if not orig.startswith("http"):
-            video_param = f"https://www.youtube.com/watch?v={vid}"
-        else:
-            video_param = orig
+        vid = extract_video_id(video_id_or_url)
+        api_param = vid
 
         media_type = "video" if is_video else "audio"
         ext = "mp4" if is_video else "m4a"
         filename = str(DOWNLOAD_DIR / f"{vid}.{ext}")
 
         endpoint = f"{SHRUTI_API_URL.rstrip('/')}/download"
-        params = {
-            "url": video_param,
-            "type": media_type,
-            "api_key": SHRUTI_API_KEY
-        }
+        params = {"url": api_param, "type": media_type, "api_key": SHRUTI_API_KEY}
 
         logger.info("Shruti download starting: %s (type: %s) -> %s", vid, media_type, endpoint)
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                endpoint,
-                params=params,
-                timeout=aiohttp.ClientTimeout(total=300)
-            ) as resp:
+            async with session.get(endpoint, params=params, timeout=aiohttp.ClientTimeout(total=300)) as resp:
                 if resp.status != 200:
                     text = await resp.text()
                     logger.warning("Shruti download HTTP %s for %s: %s", resp.status, vid, text)
                     return None
 
                 ctype = resp.headers.get("Content-Type", "")
-                # If API returned JSON with a link, follow it
-                if "application/json" in ctype:
+                if "application/json" in (ctype or ""):
                     try:
                         data = await resp.json()
                         link = data.get("link") or data.get("url") or None
@@ -179,16 +219,14 @@ async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Opti
                                 link = urljoin(SHRUTI_API_URL, link)
                             out = await _download_via_url_to_file(link, filename)
                             return out
-                        # If no link, fall through to treat body as media stream
                     except Exception as e:
                         logger.debug("Shruti JSON parse error while downloading: %s", e)
 
-                # Otherwise treat the response body as the media file stream
                 with open(filename, "wb") as f:
                     async for chunk in resp.content.iter_chunked(131072):
                         if chunk:
                             f.write(chunk)
-        
+
         if os.path.exists(filename) and os.path.getsize(filename) > 0:
             size_mb = os.path.getsize(filename) / (1024 * 1024)
             logger.info("Shruti download successful: %s (%.2f MB)", filename, size_mb)
@@ -196,7 +234,7 @@ async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Opti
         else:
             logger.warning("Shruti download resulted in empty file for %s", vid)
             return None
-            
+
     except Exception as e:
         logger.warning("Shruti download error for %s: %s", video_id_or_url, e)
         return None
@@ -489,7 +527,8 @@ class YouTube:
         Modes:
           - 'jio' => JioSaavn (audio only)
           - 'yt'/'nexgen'/'arc' => NexGenBots (respect video flag)
-          - 's'/'shruti' => Shruti API (respect video flag, supports YouTube URLs and Shorts)
+          - 's'/'shruti' => Shruti API (respect video flag)
+          - 'nub'/'n' => NubCoders (stream resolver service) — returns stream URL when possible
           - 'auto' => Telegram DB (exact id then title) -> yt-dlp fallback (respect video flag)
           - default => JioSaavn -> NexGen -> Telegram DB -> yt-dlp (respect video flag)
         """
@@ -509,7 +548,6 @@ class YouTube:
                 logger.warning("JioSaavn mode requested but video requested; JioSaavn provides audio only. Falling back to audio.")
             url = await _jiosaavn_download(video_id)
             if url:
-                # only download audio
                 out = await _download_via_url_to_file(url, filename)
                 if out:
                     _schedule_delete(out)
@@ -518,10 +556,11 @@ class YouTube:
             return None
 
         # 2) Explicit NexGen / yt
-        if mode in ("yt", "nexgen", "arc"):
+        if mode in ("yt", "nexgen", "arc", "y"):
             out = await _nexgen_download(video_id, is_video=video)
             if out:
-                _schedule_delete(out)
+                # NexGen may return stream URL or local path; return as-is
+                _schedule_delete(out) if os.path.exists(out) else None
                 return out
             logger.warning("NexGen download failed [yt/nexgen] for: %s", video_id)
             return None
@@ -535,7 +574,22 @@ class YouTube:
             logger.warning("Shruti download failed [s/shruti] for: %s", video_id)
             return None
 
-        # 4) Auto mode: prefer Telegram DB (CDN) then yt-dlp
+        # 4) Explicit NubCoders / n (stream resolver)
+        if mode in ("n", "nub", "nubcoders"):
+            # First try to obtain a stream URL without downloading
+            stream = await _nubcoders_get_stream_link(video_id)
+            if stream:
+                # Return the stream URL (caller will accept remote URL)
+                return stream
+            # Fallback: attempt to download via nubcoders to local file
+            out = await _nubcoders_download(video_id, is_video=video)
+            if out:
+                _schedule_delete(out)
+                return out
+            logger.warning("NubCoders download failed [nub] for: %s", video_id)
+            return None
+
+        # 5) Auto mode: prefer Telegram DB (CDN) then yt-dlp
         if mode == "auto":
             tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)
             if tg_file:
@@ -554,7 +608,7 @@ class YouTube:
             logger.warning("All auto sources failed for: %s", video_id)
             return None
 
-        # 5) Default behavior: JioSaavn (audio-only) -> NexGen -> Telegram DB -> yt-dlp
+        # 6) Default behavior: JioSaavn (audio-only) -> NexGen -> Telegram DB -> yt-dlp
         if not video:
             url = await _jiosaavn_download(video_id)
             if url:
@@ -565,7 +619,7 @@ class YouTube:
 
         out = await _nexgen_download(video_id, is_video=video)
         if out:
-            _schedule_delete(out)
+            _schedule_delete(out) if os.path.exists(out) else None
             return out
 
         tg_file = await _tg_channel_download_by_id(vid_for_file, is_video=video)

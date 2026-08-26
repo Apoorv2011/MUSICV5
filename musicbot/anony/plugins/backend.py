@@ -12,6 +12,12 @@ async def toggle_yt(_, message: types.Message):
     await message.reply_text("🎵 Backend: **YouTube/Arc** (primary)")
 
 
+@app.on_message(filters.command("j") & _OWNER)
+async def toggle_jio_short(_, message: types.Message):
+    set_primary("jio")
+    await message.reply_text("🎵 Backend: **JioSaavn** (primary)")
+
+
 @app.on_message(filters.command("jio") & _OWNER)
 async def toggle_jio(_, message: types.Message):
     set_primary("jio")
@@ -36,14 +42,29 @@ async def toggle_shruti_full(_, message: types.Message):
     await message.reply_text("🎵 Backend: **Shruti API** (primary)")
 
 
+@app.on_message(filters.command("y") & _OWNER)
+async def toggle_youtube_nexgen(_, message: types.Message):
+    set_primary("yt")
+    await message.reply_text("🎵 Backend: **YouTube/Arc (NexGen)** (primary)")
+
+
+@app.on_message(filters.command("n") & _OWNER)
+async def toggle_nubcoders(_, message: types.Message):
+    set_primary("nub")
+    await message.reply_text("🎵 Backend: **NubCoders** (primary)")
+
+
 @app.on_message(filters.command("backend") & _OWNER)
 async def backend_status(_, message: types.Message):
     current = get_primary()
     labels = {
-        "arc": "YouTube/Arc (NexGen)", 
-        "jio": "JioSaavn", 
+        "arc": "YouTube/Arc (NexGen)",
+        "yt": "YouTube/Arc (NexGen)",
+        "jio": "JioSaavn",
         "auto": "Auto (smart fallback)",
         "s": "Shruti API",
-        "shruti": "Shruti API"
+        "shruti": "Shruti API",
+        "nub": "NubCoders",
+        "n": "NubCoders",
     }
     await message.reply_text(f"🎵 Current backend: **{labels.get(current, current)}**")
