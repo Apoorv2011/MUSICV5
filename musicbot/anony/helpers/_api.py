@@ -1,8 +1,3 @@
-# anony/helpers/_api.py
-# Copyright (c) 2026 CyberPixelPro
-# Licensed under the MIT License.
-# This file is part of AviaxMusic
-
 import asyncio
 import re
 import aiofiles
