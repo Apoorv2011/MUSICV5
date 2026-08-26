@@ -135,22 +135,27 @@ async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Opti
         return None
     
     try:
-        # Extract video ID from URL if needed
-        video_id = extract_video_id(video_id_or_url)
-        
+        # Extract video ID and normalize to full URL if caller provided only an ID
+        orig = (video_id_or_url or "").strip()
+        vid = extract_video_id(orig)
+        if not orig.startswith("http"):
+            video_param = f"https://www.youtube.com/watch?v={vid}"
+        else:
+            video_param = orig
+
         media_type = "video" if is_video else "audio"
         ext = "mp4" if is_video else "m4a"
-        filename = str(DOWNLOAD_DIR / f"{video_id}.{ext}")
-        
-        endpoint = f"{SHRUTI_API_URL}/download"
+        filename = str(DOWNLOAD_DIR / f"{vid}.{ext}")
+
+        endpoint = f"{SHRUTI_API_URL.rstrip('/')}/download"
         params = {
-            "url": video_id_or_url,  # Send original URL/ID to API
+            "url": video_param,
             "type": media_type,
             "api_key": SHRUTI_API_KEY
         }
-        
-        logger.info("Shruti download starting: %s (type: %s)", video_id, media_type)
-        
+
+        logger.info("Shruti download starting: %s (type: %s) -> %s", vid, media_type, endpoint)
+
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 endpoint,
@@ -159,9 +164,26 @@ async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Opti
             ) as resp:
                 if resp.status != 200:
                     text = await resp.text()
-                    logger.warning("Shruti download HTTP %s for %s: %s", resp.status, video_id, text)
+                    logger.warning("Shruti download HTTP %s for %s: %s", resp.status, vid, text)
                     return None
-                
+
+                ctype = resp.headers.get("Content-Type", "")
+                # If API returned JSON with a link, follow it
+                if "application/json" in ctype:
+                    try:
+                        data = await resp.json()
+                        link = data.get("link") or data.get("url") or None
+                        if link:
+                            if link.startswith("/"):
+                                from urllib.parse import urljoin
+                                link = urljoin(SHRUTI_API_URL, link)
+                            out = await _download_via_url_to_file(link, filename)
+                            return out
+                        # If no link, fall through to treat body as media stream
+                    except Exception as e:
+                        logger.debug("Shruti JSON parse error while downloading: %s", e)
+
+                # Otherwise treat the response body as the media file stream
                 with open(filename, "wb") as f:
                     async for chunk in resp.content.iter_chunked(131072):
                         if chunk:
@@ -172,7 +194,7 @@ async def _shruti_download(video_id_or_url: str, is_video: bool = False) -> Opti
             logger.info("Shruti download successful: %s (%.2f MB)", filename, size_mb)
             return filename
         else:
-            logger.warning("Shruti download resulted in empty file for %s", video_id)
+            logger.warning("Shruti download resulted in empty file for %s", vid)
             return None
             
     except Exception as e:
