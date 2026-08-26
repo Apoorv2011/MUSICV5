@@ -127,7 +127,6 @@ async def _nubcoders_get_stream_link(video_id_or_url: str, timeout: int = 15) ->
     """Use NubCoders /info to obtain a stream_url and return it (no download)."""
     api_url = getattr(config, "NUBCODERS_API_URL", None) or getattr(config, "NUBCODERS_API", None) or None
     token = getattr(config, "NUBCODERS_TOKEN", None)
-    # Also allow env fallback if config not populated
     if not api_url:
         import os
         api_url = os.getenv("NUBCODERS_API_URL")
@@ -329,11 +328,10 @@ class TgCall(PyTgCalls):
                     user_mention = _build_user_mention(media)
                     escaped_url = html.escape(url, quote=True)
 
-                    # Build caption WITHOUT the time_line (progress). Controls area handles progress.
                     text = (
                         '<b>❖ 𝛅ᴛᴧʀᴛєᴅ 𝛅ᴛʀєᴧϻɪηɢ</b>\n\n'
                         f'◉ <b>❍ тɪᴛʟє :</b> <a href="{escaped_url}">{title}</a>\n'
-                        f'◉ <b>❍ ᴅᴜʀᴧᴛɪση:</b> {duration_text}\n'
+                        f'◉ <b>❍ ᴅᴜʀᴧᴛɪηɢ:</b> {duration_text}\n'
                         f'◉ <b>ʙʏ:</b> {user_mention}\n\n'
                         f'✦ <b>❖ ᴍᴀᴅᴇ ʙʏ...</b> <a href="https://t.me/IsolatedBytes">@IsolatedBytes</a>'
                     )
@@ -347,7 +345,6 @@ class TgCall(PyTgCalls):
                     text = f"{title_fb} — {dur_fb}\nRequested by: {user_fb}\n{url_fb}"
 
                 keyboard = buttons.controls(chat_id)
-                _reveal = getattr(config, "THUMBNAIL_REVEAL", False)
 
                 try:
                     if _thumb:
@@ -355,7 +352,7 @@ class TgCall(PyTgCalls):
                             await message.edit_media(
                                 media=InputMediaPhoto(
                                     media=_thumb,
-                                    has_spoiler=_reveal,
+                                    has_spoiler=True,
                                 ),
                                 reply_markup=keyboard,
                             )
@@ -378,7 +375,7 @@ class TgCall(PyTgCalls):
                                 photo=_thumb,
                                 caption=text,
                                 reply_markup=keyboard,
-                                has_spoiler=_reveal,
+                                has_spoiler=True,
                                 parse_mode=ParseMode.HTML,
                             )
                             media.message_id = sent.id
@@ -391,7 +388,7 @@ class TgCall(PyTgCalls):
                             photo=_thumb,
                             caption=text,
                             reply_markup=keyboard,
-                            has_spoiler=_reveal,
+                            has_spoiler=True,
                             parse_mode=ParseMode.HTML,
                         )
                     else:
