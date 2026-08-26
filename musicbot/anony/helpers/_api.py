@@ -1,8 +1,3 @@
-# anony/helpers/_api.py
-# Copyright (c) 2026 CyberPixelPro
-# Licensed under the MIT License.
-# This file is part of AviaxMusic
-
 import re
 import asyncio
 
@@ -12,9 +7,13 @@ import aiofiles
 
 class NexGenApi:
     def __init__(
-            self, api_url: str, api_key: str, video_api_url: str,
-            retries: int = 10, timeout: int = 40,
-        ):
+        self,
+        api_url: str,
+        api_key: str,
+        video_api_url: str,
+        retries: int = 10,
+        timeout: int = 40,
+    ):
         self.api_url = api_url
         self.video_api_url = video_api_url
         self.api_key = api_key
@@ -32,6 +31,7 @@ class NexGenApi:
 
     async def save_file(self, vid_id: str, url: str, video: bool = False) -> str | None:
         try:
+            await self.get_session()
             async with self.session.get(url) as resp:
                 if resp.status != 200:
                     return None
@@ -40,17 +40,21 @@ class NexGenApi:
                 cd = resp.headers.get("Content-Disposition")
                 if cd:
                     match = re.search(r'filename="?(.+?)"?$', cd)
-                    if match: file_name = match.group(1)
-                else:
+                    if match:
+                        file_name = match.group(1)
+                if not file_name:
                     file_name = vid_id + (".mp4" if video else ".mp3")
 
                 fname = f"downloads/{file_name}"
                 async with aiofiles.open(fname, "wb") as f:
                     async for chunk in resp.content.iter_chunked(self.chunk_limit):
-                        if chunk: await f.write(chunk)
+                        if chunk:
+                            await f.write(chunk)
 
-                if video: self.v_cache[vid_id] = fname
-                else: self.dl_cache[vid_id] = fname
+                if video:
+                    self.v_cache[vid_id] = fname
+                else:
+                    self.dl_cache[vid_id] = fname
 
                 return fname
         except Exception:
@@ -63,6 +67,7 @@ class NexGenApi:
         elif not video and vid_id in self.dl_cache:
             return self.dl_cache[vid_id]
 
+        await self.get_session()
         endp = f"{self.api_url}/song/{vid_id}?api={self.api_key}"
         if video:
             endp = f"{self.video_api_url}/video/{vid_id}?api={self.api_key}"
@@ -70,15 +75,18 @@ class NexGenApi:
         for _ in range(self.retries):
             try:
                 async with self.session.get(endp, headers=self.headers) as resp:
+                    if resp.status != 200:
+                        return None
                     data = await resp.json()
-                    if resp.status != 200: return None
 
                     status = data.get("status")
                     dl_link = data.get("link")
-                    if not status: return None
+                    if not status:
+                        return None
 
                     if status == "done":
-                        if not dl_link: return None
+                        if not dl_link:
+                            return None
                         return await self.save_file(vid_id, dl_link, video)
                     elif status == "downloading":
                         await asyncio.sleep(4)
@@ -108,6 +116,7 @@ class ShrutiApi:
 
     async def save_file(self, vid_id: str, url: str, video: bool = False) -> str | None:
         try:
+            await self.get_session()
             async with self.session.get(url) as resp:
                 if resp.status != 200:
                     return None
@@ -116,17 +125,21 @@ class ShrutiApi:
                 cd = resp.headers.get("Content-Disposition")
                 if cd:
                     match = re.search(r'filename="?(.+?)"?$', cd)
-                    if match: file_name = match.group(1)
-                else:
+                    if match:
+                        file_name = match.group(1)
+                if not file_name:
                     file_name = vid_id + (".mp4" if video else ".m4a")
 
                 fname = f"downloads/{file_name}"
                 async with aiofiles.open(fname, "wb") as f:
                     async for chunk in resp.content.iter_chunked(self.chunk_limit):
-                        if chunk: await f.write(chunk)
+                        if chunk:
+                            await f.write(chunk)
 
-                if video: self.v_cache[vid_id] = fname
-                else: self.dl_cache[vid_id] = fname
+                if video:
+                    self.v_cache[vid_id] = fname
+                else:
+                    self.dl_cache[vid_id] = fname
 
                 return fname
         except Exception:
@@ -139,6 +152,7 @@ class ShrutiApi:
         elif not video and vid_id in self.dl_cache:
             return self.dl_cache[vid_id]
 
+        await self.get_session()
         media_type = "video" if video else "audio"
         endp = f"{self.api_url}/download?url={vid_id}&type={media_type}&api_key={self.api_key}"
 
@@ -153,10 +167,8 @@ class ShrutiApi:
                         data = await resp.json()
                         status = data.get("status")
                         if status == "success":
-                            # For Shruti, the file is directly downloaded
                             return await self.save_file(vid_id, endp, video)
                     except Exception:
-                        # If not JSON, it might be a direct file download
                         return await self.save_file(vid_id, endp, video)
 
             except Exception:
