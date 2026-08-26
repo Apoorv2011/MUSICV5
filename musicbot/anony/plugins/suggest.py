@@ -1,6 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-
 import asyncio
 import html
 import re
@@ -105,7 +102,21 @@ def _song_from_saved(song: dict, user: str, user_id: int) -> Track:
     )
 
 
+async def _queue_track_next(chat_id: int, track: Track) -> int | str:
+    if not await db.get_call(chat_id):
+        return "Start a song in the voice chat first, then choose a recommendation."
+
+    current = queue.get_current(chat_id)
+    if not current:
+        return "Nothing is currently playing."
+
+    # Keep the current stream playing and put the recommendation immediately
+    # after it. The normal play_next lifecycle will download and start it.
+    return queue.add_next(chat_id, track)
+
+
 async def _play_track_now(chat_id: int, track: Track) -> str | None:
+    """Keep the existing Favorites behavior: replace the current track."""
     if not await db.get_call(chat_id):
         return "Start a song in the voice chat first, then choose a recommendation."
 
@@ -176,6 +187,7 @@ async def suggest_back(_, query: types.CallbackQuery):
 
 
 @app.on_callback_query(filters.regex(r"^suggest_play ") & ~app.bl_users)
+@lang.language()
 @can_manage_vc
 async def suggest_play(_, query: types.CallbackQuery):
     _, chat_id_text, video_id = query.data.split()
@@ -187,11 +199,15 @@ async def suggest_play(_, query: types.CallbackQuery):
         return await query.answer("Song metadata could not be loaded.", show_alert=True)
     track.user = query.from_user.mention
     track.user_id = query.from_user.id
-    error = await _play_track_now(chat_id, track)
-    if error:
-        return await query.answer(error, show_alert=True)
-    await query.answer("Playing selected song…")
-    await query.message.delete()
+    result = await _queue_track_next(chat_id, track)
+    if isinstance(result, str):
+        return await query.answer(result, show_alert=True)
+    position = result
+    await query.answer(f"Queued next as track #{position}.")
+    try:
+        await query.message.delete()
+    except Exception:
+        pass
 
 
 @app.on_callback_query(filters.regex(r"^suggest_page ") & ~app.bl_users)
