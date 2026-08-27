@@ -251,7 +251,7 @@ class Inline:
             ("✦ Fᴜɴ & Gᴀᴍᴇs", "help management fun"),
             ("✦ Iᴍᴀɢᴇ", "help management image"),
             ("✦ Gʀᴏᴜᴘ", "help management group"),
-            ("✦ Nᴀsᴛ", "help management nast"),
+            ("✦ ᴍᴀsᴛɪ", "help management  masti"),
             ("✦ Mᴀss Aᴄᴛɪᴏɴ", "help management mass"),
             ("✦ Pɪɴɢ", "help management ping"),
         )
