@@ -1,4 +1,3 @@
-# anony/core/calls.py
 from typing import Optional
 
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
@@ -201,11 +200,18 @@ class TgCall(PyTgCalls):
     ) -> None:
         client = await db.get_assistant(chat_id)
         _lang = await lang.get_lang(chat_id)
+        thumbnail_enabled = getattr(config, "THUMB_GEN", False)
+        try:
+            from anony.plugins.autoplay import is_autoplay_on, is_thumbnail_on
+            await is_autoplay_on(chat_id)
+            thumbnail_enabled = await is_thumbnail_on(chat_id)
+        except Exception:
+            pass
         _thumb = (
             await thumb.get(media, chat_id)
             if isinstance(media, Track)
             else config.DEFAULT_THUMB
-        ) if getattr(config, "THUMB_GEN", False) else None
+        ) if thumbnail_enabled else None
 
         if not media.file_path:
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
@@ -353,6 +359,7 @@ class TgCall(PyTgCalls):
             await db.set_loop(chat_id, loop - 1)
             return await self.replay(chat_id)
 
+        finished = queue.get_current(chat_id)
         media = queue.get_next(chat_id)
         try:
             if media.message_id:
@@ -366,7 +373,16 @@ class TgCall(PyTgCalls):
             pass
 
         if not media:
-            return await self.stop(chat_id)
+            try:
+                from anony.plugins.autoplay import get_autoplay_track
+                media = await get_autoplay_track(chat_id, finished)
+            except Exception:
+                media = None
+
+            if media:
+                queue.add(chat_id, media)
+            else:
+                return await self.stop(chat_id)
 
         _lang = await lang.get_lang(chat_id)
         msg = await app.send_message(chat_id=chat_id, text=_lang["play_next"])

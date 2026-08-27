@@ -1,7 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
 import asyncio
 import os
 import random
@@ -102,13 +98,13 @@ async def _capture_sticker(_, m: types.Message):
 @lang.language()
 async def _help(_, m: types.Message):
     await m.reply_text(
-        text=m.lang["help_menu"],
-        reply_markup=buttons.help_markup(m.lang),
+        text=m.lang.get("help_main", m.lang["help_menu"]),
+        reply_markup=buttons.help_main_markup(m.lang),
         quote=True,
     )
 
 
-# ── start command ─────────────────────────────────────────────────────────────
+# ── start command ────────────────────────────────────────────────────────────
 
 @app.on_message(filters.command(["start"]))
 @lang.language()
@@ -125,7 +121,7 @@ async def start(_, message: types.Message):
         effect_id = random.choice(_EFFECTS)
         sticker_id = _load_sticker_id()
 
-        # 1️⃣  Send sticker — give the user 3 seconds to actually see it, then delete
+        # Send the saved sticker briefly before the welcome message.
         if sticker_id:
             try:
                 sticker_msg = await app.send_sticker(
@@ -137,10 +133,7 @@ async def start(_, message: types.Message):
             except Exception:
                 pass
 
-        # 2️⃣  Fire fullscreen animation via a text message (effect_id is only
-        #     guaranteed on text/sticker messages, not photos).
-        #     Wait 2.5s so the animation (fire/heart/party ~2s) finishes fully,
-        #     then delete the trigger text before the photo arrives.
+        # Trigger a fullscreen Telegram effect, then remove its trigger message.
         try:
             effect_msg = await app.send_message(
                 chat_id=message.chat.id,
@@ -152,9 +145,8 @@ async def start(_, message: types.Message):
         except Exception:
             pass
 
-        # 3️⃣  Intro photo arrives after animation is done
         _text = await _build_start_pm(message.from_user.mention)
-        key   = buttons.start_key(message.lang, private=True)
+        key = buttons.start_key(message.lang, private=True)
 
         try:
             await app.send_photo(
@@ -166,14 +158,12 @@ async def start(_, message: types.Message):
         except Exception:
             await message.reply_text(text=_text, reply_markup=key, quote=False)
 
-        # Register new user
         if await db.is_user(message.from_user.id):
             return
         await utils.send_log(message)
         await db.add_user(message.from_user.id)
 
     else:
-        # Group /start
         _text = message.lang["start_gp"].format(app.name)
         key = buttons.start_key(message.lang, private=False)
         await message.reply_photo(
@@ -188,7 +178,7 @@ async def start(_, message: types.Message):
         await db.add_chat(message.chat.id)
 
 
-# ── settings command ──────────────────────────────────────────────────────────
+# ── settings command ─────────────────────────────────────────────────────────
 
 @app.on_message(filters.command(["playmode", "settings"]) & filters.group & ~app.bl_users)
 @lang.language()

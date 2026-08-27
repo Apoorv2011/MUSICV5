@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 from pyrogram import enums, types
 
 from anony import app, config, lang
@@ -19,6 +14,23 @@ class Inline:
         """Create a colorful inline button without changing its action."""
         kwargs.setdefault("style", enums.ButtonStyle.PRIMARY)
         return types.InlineKeyboardButton(**kwargs)
+
+    @staticmethod
+    def _button_style(index: int):
+        """Cycle through Telegram's button colors for the help menus."""
+        styles = (
+            enums.ButtonStyle.PRIMARY,
+            getattr(enums.ButtonStyle, "SUCCESS", enums.ButtonStyle.PRIMARY),
+            getattr(enums.ButtonStyle, "DANGER", enums.ButtonStyle.PRIMARY),
+        )
+        return styles[index % len(styles)]
+
+    def _color_button(self, text: str, callback_data: str, index: int):
+        return self.ikb(
+            text=text,
+            callback_data=callback_data,
+            style=self._button_style(index),
+        )
 
     def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
         return self.ikm([[self.ikb(text=text, callback_data=f"cancel_dl")]])
@@ -73,32 +85,61 @@ class Inline:
             )
 
         if not remove:
+            try:
+                from anony.plugins.autoplay import AUTO_STATE, THUMBNAIL_STATE
+                autoplay_on = AUTO_STATE.get(chat_id, True)
+                thumbnail_on = THUMBNAIL_STATE.get(
+                    chat_id, getattr(config, "THUMB_GEN", True)
+                )
+            except Exception:
+                autoplay_on = True
+                thumbnail_on = getattr(config, "THUMB_GEN", True)
+
             keyboard.append(
                 [
-                    self.ikb(text="▶️", callback_data=f"controls resume {chat_id}"),
-                    self.ikb(text="⏸", callback_data=f"controls pause {chat_id}"),
-                    self.ikb(text="🔄", callback_data=f"controls replay {chat_id}"),
-                    self.ikb(text="⏭", callback_data=f"controls skip {chat_id}"),
-                    self.ikb(text="⏹", callback_data=f"controls stop {chat_id}"),
+                    self._color_button("▷", f"controls resume {chat_id}", 1),
+                    self._color_button("II", f"controls pause {chat_id}", 0),
+                    self._color_button("↻", f"controls replay {chat_id}", 1),
+                    self._color_button("‣‣I", f"controls skip {chat_id}", 0),
+                    self._color_button("▢", f"controls stop {chat_id}", 2),
                 ]
             )
             keyboard.append(
-                [self.ikb(text="🎨 ᴅᴇsɪɢɴ", callback_data=f"design pick {chat_id}")]
-            )
-            keyboard.append(
                 [
-                    self.ikb(
-                        text="💡 sᴜɢɢᴇsᴛ",
-                        callback_data=f"suggest {chat_id}",
+                    self._color_button(
+                        "-𝟷𝟻", f"controls seekback {chat_id}", 2
                     ),
-                    self.ikb(
-                        text="💗 ғᴀᴠ",
-                        callback_data=f"fav {chat_id}",
+                    self._color_button(
+                        "𝟷𝟻+", f"controls seekforward {chat_id}", 1
                     ),
                 ]
             )
             keyboard.append(
-                [self.ikb(text="╳  ᴄʟᴏsᴇ  ╳", callback_data=f"controls close {chat_id}")]
+                [
+                    self._color_button("✦ sᴜɢɢᴇsᴛ", f"suggest {chat_id}", 0),
+                    self._color_button("✦ ғᴀᴠ", f"fav {chat_id}", 2),
+                ]
+            )
+            keyboard.append(
+                [
+                    self._color_button(
+                        f"ᴀᴜᴛᴏᴘʟᴀʏ {'🟢' if autoplay_on else '🔴'}",
+                        f"autoplay toggle {chat_id}",
+                        1 if autoplay_on else 2,
+                    ),
+                    self._color_button(
+                        f"ᴛʜᴜᴍʙɴᴀɪʟ {'🟢' if thumbnail_on else '🔴'}",
+                        f"thumbnail toggle {chat_id}",
+                        1 if thumbnail_on else 2,
+                    ),
+                ]
+            )
+            keyboard.append(
+                [
+                    self._color_button(
+                        "◎ ᴄʟᴏsᴇ ◎", f"controls close {chat_id}", 2
+                    )
+                ]
             )
         return self.ikm(keyboard)
 
@@ -139,25 +180,159 @@ class Inline:
         ]
         return self.ikm(rows)
 
+    def _help_nav(self, _lang: dict, callback_data: str = "help main"):
+        return [
+            self._color_button(f"◎ {_lang.get('back', 'Back')} ◎", callback_data, 0),
+            self._color_button(
+                f"◎ {_lang.get('close', 'Close')} ◎", "help close", 2
+            ),
+        ]
+
+    def help_main_markup(self, _lang: dict) -> types.InlineKeyboardMarkup:
+        """Top-level help menu matching the requested category layout."""
+        rows = [
+            [
+                self._color_button("☯ Mᴜsɪᴄ", "help music", 0),
+                self._color_button("⚕ Mᴀɴᴀɢᴇᴍᴇɴᴛ", "help management", 1),
+            ],
+            [self._color_button("◉ Sᴇᴀʀᴄʜ", "help search", 2)],
+            [
+                self._color_button(
+                    "Bᴏᴛ Pʟᴀʏ Bᴜᴛᴛᴏɴs", "help bot", 0
+                )
+            ],
+            self._help_nav(_lang),
+        ]
+        return self.ikm(rows)
+
+    def help_music_markup(self, _lang: dict) -> types.InlineKeyboardMarkup:
+        """The original command categories, now nested under Music."""
+        cbs = [
+            "admins",
+            "auth",
+            "blist",
+            "lang",
+            "ping",
+            "play",
+            "queue",
+            "stats",
+            "sudo",
+        ]
+        buttons = [
+            self._color_button(
+                _lang.get(f"help_{i}", label),
+                f"help music {cb}",
+                index,
+            )
+            for index, (i, cb, label) in enumerate(
+                (
+                    (0, "admins", "Admins"),
+                    (1, "auth", "Auth"),
+                    (2, "blist", "Blacklist"),
+                    (3, "lang", "Language"),
+                    (4, "ping", "Ping"),
+                    (5, "play", "Play"),
+                    (6, "queue", "Queue"),
+                    (7, "stats", "Stats"),
+                    (8, "sudo", "Sudoers"),
+                )
+            )
+        ]
+        rows = [buttons[i : i + 3] for i in range(0, len(buttons), 3)]
+        rows.append(self._help_nav(_lang))
+        return self.ikm(rows)
+
+    def management_markup(self, _lang: dict) -> types.InlineKeyboardMarkup:
+        """Management categories based on the second reference image."""
+        labels = (
+            ("✦ Aᴄᴛɪᴏɴ", "help management action"),
+            ("✦ Exᴛʀᴀ", "help extra"),
+            ("✦ Cʟᴀᴜᴅᴇ", "help management claude"),
+            ("✦ Fᴜɴ & Gᴀᴍᴇs", "help management fun"),
+            ("✦ Iᴍᴀɢᴇ", "help management image"),
+            ("✦ Gʀᴏᴜᴘ", "help management group"),
+            ("✦ Nᴀsᴛ", "help management nast"),
+            ("✦ Mᴀss Aᴄᴛɪᴏɴ", "help management mass"),
+            ("✦ Pɪɴɢ", "help management ping"),
+        )
+        buttons = [
+            self._color_button(text, callback, index)
+            for index, (text, callback) in enumerate(labels)
+        ]
+        rows = [buttons[i : i + 3] for i in range(0, len(buttons), 3)]
+        rows.append(self._help_nav(_lang))
+        return self.ikm(rows)
+
+    def search_markup(self, _lang: dict) -> types.InlineKeyboardMarkup:
+        """Search options requested for the Search category."""
+        labels = (
+            ("✦ Pɪɴᴛᴇʀᴇsᴛ", "help search pinterest"),
+            ("✦ Sᴏɴɢ", "help search song"),
+            ("✦ Lʏʀɪᴄs", "help search lyrics"),
+            ("✦ Wᴀʟʟᴘᴀᴘᴇʀ", "help search wallpaper"),
+        )
+        buttons = [
+            self._color_button(text, callback, index)
+            for index, (text, callback) in enumerate(labels)
+        ]
+        rows = [buttons[:2], buttons[2:], self._help_nav(_lang)]
+        return self.ikm(rows)
+
+    def extras_markup(self, _lang: dict) -> types.InlineKeyboardMarkup:
+        """Extra tools from the third reference image, excluding requested items."""
+        labels = (
+            ("✦ Tᴀɢ-Aʟʟ", "help extra tagall"),
+            ("✦ Tᴇxᴛ Eᴅɪᴛ", "help extra textedit"),
+            ("✦ Aᴜᴛᴏ Bʀᴏᴀᴅ", "help extra autobroad"),
+            ("✦ Uᴛɪʟ / Fᴜɴ", "help extra util"),
+        )
+        buttons = [
+            self._color_button(text, callback, index)
+            for index, (text, callback) in enumerate(labels)
+        ]
+        return self.ikm(
+            [
+                buttons[:2],
+                buttons[2:],
+                [
+                    self._color_button(
+                        f"◎ {_lang.get('back', 'Back')} ◎", "help management", 0
+                    ),
+                    self._color_button("△ Mᴇɴᴜ", "help main", 1),
+                    self._color_button(
+                        f"◎ {_lang.get('close', 'Close')} ◎", "help close", 2
+                    ),
+                ],
+            ]
+        )
+
+    def help_detail_markup(
+        self, _lang: dict, back_callback: str = "help music"
+    ) -> types.InlineKeyboardMarkup:
+        return self.ikm(
+            [
+                [
+                    self._color_button(
+                        f"◎ {_lang.get('back', 'Back')} ◎",
+                        back_callback,
+                        0,
+                    ),
+                    self._color_button(
+                        f"◎ {_lang.get('close', 'Close')} ◎",
+                        "help close",
+                        2,
+                    ),
+                ]
+            ]
+        )
+
     def help_markup(
         self, _lang: dict, back: bool = False
     ) -> types.InlineKeyboardMarkup:
+        """Compatibility wrapper for plugins that still call help_markup."""
         if back:
-            rows = [
-                [
-                    self.ikb(text=_lang["back"], callback_data="help back"),
-                    self.ikb(text=_lang["close"], callback_data="help close"),
-                ]
-            ]
-        else:
-            cbs = ["admins", "auth", "blist", "lang", "ping", "play", "queue", "stats", "sudo"]
-            buttons = [
-                self.ikb(text=_lang[f"help_{i}"], callback_data=f"help {cb}")
-                for i, cb in enumerate(cbs)
-            ]
-            rows = [buttons[i : i + 3] for i in range(0, len(buttons), 3)]
-
-        return self.ikm(rows)
+            return self.help_detail_markup(_lang)
+        return self.help_main_markup(_lang)
 
     def lang_markup(self, _lang: str) -> types.InlineKeyboardMarkup:
         langs = lang.get_languages()
@@ -260,4 +435,5 @@ class Inline:
                 ],
             ]
         )
+
 

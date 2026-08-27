@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 from collections import defaultdict, deque
 from typing import Union
 
@@ -19,6 +14,15 @@ class Queue:
         """Add an item to the queue and return its position (1-based)."""
         self.queues[chat_id].append(item)
         return len(self.queues[chat_id]) - 1
+
+    def add_next(self, chat_id: int, item: MediaItem) -> int:
+        """Insert an item directly after the currently playing item."""
+        items = list(self.queues[chat_id])
+        insert_at = 1 if items else 0
+        items.insert(insert_at, item)
+        self.queues[chat_id].clear()
+        self.queues[chat_id].extend(items)
+        return insert_at
 
     def check_item(self, chat_id: int, item_id: str) -> tuple[int, MediaItem | None]:
         """Check if an item with the given ID exists in the queue."""
