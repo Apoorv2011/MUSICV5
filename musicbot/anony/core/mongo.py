@@ -41,8 +41,10 @@ class MongoDB:
         self.favoritesdb = self.db.favorites
         self.autoplaydb = self.db.autoplay
         self.thumbnaildb = self.db.thumbnail
+        self.biolinkdb = self.db.biolink
         self.autoplay = {}
         self.thumbnail = {}
+        self.biolink = {}
 
     async def connect(self) -> None:
         """Check if we can connect to the database.
@@ -134,6 +136,26 @@ class MongoDB:
     async def toggle_thumbnail(self, chat_id: int) -> bool:
         enabled = not await self.get_thumbnail(chat_id)
         await self.set_thumbnail(chat_id, enabled)
+        return enabled
+
+    async def get_biolink(self, chat_id: int) -> bool:
+        if chat_id not in self.biolink:
+            doc = await self.biolinkdb.find_one({"_id": chat_id})
+            self.biolink[chat_id] = bool(doc and doc.get("enabled", False))
+        return self.biolink[chat_id]
+
+    async def set_biolink(self, chat_id: int, enabled: bool) -> None:
+        enabled = bool(enabled)
+        self.biolink[chat_id] = enabled
+        await self.biolinkdb.update_one(
+            {"_id": chat_id},
+            {"$set": {"enabled": enabled}},
+            upsert=True,
+        )
+
+    async def toggle_biolink(self, chat_id: int) -> bool:
+        enabled = not await self.get_biolink(chat_id)
+        await self.set_biolink(chat_id, enabled)
         return enabled
 
     # AUTH METHODS
