@@ -162,7 +162,8 @@ class Thumbnail:
     async def generate_design2(self, song: Track) -> str:
         """Blurred bg, info on left, cover card + requester DP on right, waveform bottom."""
         try:
-            output = f"cache/thumbs/d2_{song.id}.png"
+            requester_id = getattr(song, "user_id", None) or 0
+            output = f"cache/thumbs/d2_{song.id}_{requester_id}.png"
             if os.path.exists(output):
                 return output
 
@@ -265,15 +266,15 @@ class Thumbnail:
             dp_cy = cy2 + ch - dp_sz // 2 + 10
             dp_drawn = False
 
-            if getattr(song, "user_id", None):
+            if requester_id:
                 try:
                     from anony import app
-                    dp_file = f"cache/thumbs/dp_{song.user_id}.jpg"
+                    dp_file = f"cache/thumbs/dp_{requester_id}.jpg"
                     if not os.path.exists(dp_file):
-                        async for photo in app.get_chat_photos(song.user_id, limit=1):
+                        async for photo in app.get_chat_photos(requester_id, limit=1):
                             await app.download_media(photo, file_name=dp_file)
                             break
-                    if os.path.exists(dp_file):
+                    if os.path.exists(dp_file) and os.path.getsize(dp_file) > 0:
                         dp = Image.open(dp_file).convert("RGBA").resize(
                             (dp_sz, dp_sz), Image.Resampling.LANCZOS)
                         dm = Image.new("L", (dp_sz, dp_sz), 0)
@@ -366,3 +367,4 @@ class Thumbnail:
             return output
         except Exception:
             return config.DEFAULT_THUMB
+

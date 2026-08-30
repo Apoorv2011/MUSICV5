@@ -1,11 +1,13 @@
+"""Optional group protection for links found in new members' bios."""
+
 import html
 import re
 import time
 
-from pyrogram import Client, filters, types
+from pyrogram import Client, enums, filters, types
 from pyrogram.types import ChatMemberUpdated, ChatPermissions
 
-from anony import app, db, lang
+from anony import app, db, lang, logger
 from anony.helpers import admin_check, utils
 
 
@@ -31,6 +33,52 @@ async def _authorize(user_id: int, name: str = "") -> None:
 
 async def _unauthorize(user_id: int) -> None:
     await _auth_db.delete_one({"_id": user_id})
+
+
+async def _check_bio_and_restrict(client: Client, chat_id: int, user) -> None:
+    if user is None or not await db.get_biolink(chat_id):
+        return
+    if user.id in app.sudoers or await _is_authorized(user.id):
+        return
+
+    try:
+        member = await client.get_chat_member(chat_id, user.id)
+        if member.status in (
+            enums.ChatMemberStatus.ADMINISTRATOR,
+            enums.ChatMemberStatus.OWNER,
+        ):
+            return
+    except Exception:
+        pass
+
+    try:
+        profile = await client.get_users(user.id)
+    except Exception as exc:
+        logger.warning("Could not read bio for %s: %s", user.id, type(exc).__name__)
+        return
+
+    bio = getattr(profile, "bio", "") or ""
+    if not bio or not _URL_RE.search(bio):
+        return
+
+    try:
+        await client.restrict_chat_member(
+            chat_id,
+            profile.id,
+            ChatPermissions(can_send_messages=False),
+        )
+        await app.send_message(
+            chat_id,
+            f"Bio link detected — {_mention(profile.id, profile.first_name or 'user')} "
+            "has been restricted.\nAn admin can use <code>/bauth</code> to allow them.",
+        )
+    except Exception as exc:
+        logger.warning(
+            "Could not restrict bio-link user %s in %s: %s",
+            profile.id,
+            chat_id,
+            type(exc).__name__,
+        )
 
 
 @app.on_message(filters.command("biolink") & filters.group & ~app.bl_users)
@@ -110,33 +158,9 @@ async def bio_filter_member(client: Client, update: ChatMemberUpdated):
         return
 
     user = update.new_chat_member.user
-    if user is None or await _is_authorized(user.id):
-        return
-    if not await db.get_biolink(update.chat.id):
-        return
-    if user.id in app.sudoers:
-        return
-
-    try:
-        profile = await client.get_users(user.id)
-    except Exception:
-        return
+    await _check_bio_and_restrict(client, update.chat.id, user)
 
 
-    bio = getattr(profile, "bio", "") or ""
-    if not bio or not _URL_RE.search(bio):
-        return
-
-    try:
-        await client.restrict_chat_member(
-            update.chat.id,
-            profile.id,
-            ChatPermissions(can_send_messages=False),
-        )
-        await app.send_message(
-            update.chat.id,
-            f"Bio link detected — {_mention(profile.id, profile.first_name or 'user')} "
-            "has been restricted.\nAn admin can use <code>/bauth</code> to allow them.",
-        )
-    except Exception:
-        return
+@app.on_message(filters.group & ~filters.bot & ~app.bl_users)
+async def bio_filter_message(client: Client, message: types.Message):
+    await _check_bio_and_restrict(client, message.chat.id, message.from_user)
