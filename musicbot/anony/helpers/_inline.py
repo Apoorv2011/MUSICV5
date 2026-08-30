@@ -372,30 +372,85 @@ class Inline:
         )
 
     def settings_markup(
-        self, lang: dict, admin_only: bool, cmd_delete: bool, language: str, chat_id: int
+        self,
+        lang: dict,
+        admin_only: bool,
+        cmd_delete: bool,
+        language: str,
+        chat_id: int,
+        bio_link: bool = False,
     ) -> types.InlineKeyboardMarkup:
+        from player_style import get_style
+
+        style = get_style(chat_id)
+        style_name = {
+            1: "Design 1",
+            2: "Design 2",
+            3: "Design 3",
+            4: "Default",
+        }.get(style, f"Design {style}")
+
         return self.ikm(
             [
                 [
-                    self.ikb(
+                    self._color_button(
                         text=lang["play_mode"] + " ➜",
                         callback_data="settings",
+                        index=0,
                     ),
-                    self.ikb(text=admin_only, callback_data="settings play"),
+                    self._color_button(
+                        text=str(admin_only),
+                        callback_data="settings play",
+                        index=1 if admin_only else 2,
+                    ),
                 ],
                 [
-                    self.ikb(
+                    self._color_button(
                         text=lang["cmd_delete"] + " ➜",
                         callback_data="settings",
+                        index=0,
                     ),
-                    self.ikb(text=cmd_delete, callback_data="settings delete"),
+                    self._color_button(
+                        text=str(cmd_delete),
+                        callback_data="settings delete",
+                        index=1 if cmd_delete else 2,
+                    ),
                 ],
                 [
-                    self.ikb(
+                    self._color_button(
                         text=lang["language"] + " ➜",
                         callback_data="settings",
+                        index=0,
                     ),
-                    self.ikb(text=lang_codes[language], callback_data="language"),
+                    self._color_button(
+                        text=lang_codes[language],
+                        callback_data="language",
+                        index=1,
+                    ),
+                ],
+                [
+                    self._color_button(
+                        text="Thumb design ➜",
+                        callback_data=f"design pick {chat_id}",
+                        index=0,
+                    ),
+                    self._color_button(
+                        text=style_name,
+                        callback_data=f"design pick {chat_id}",
+                        index=1,
+                    ),
+                ],
+                [
+                    self._color_button(
+                        text="Bio link ➜",
+                        callback_data="settings",
+                        index=0,
+                    ),
+                    self._color_button(
+                        text=str(bio_link),
+                        callback_data="settings biolink",
+                        index=1 if bio_link else 2,
+                    ),
                 ],
             ]
         )
