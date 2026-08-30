@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 import re
 
 from pyrogram import errors, filters, types
@@ -346,12 +341,13 @@ async def _settings_cb(_, query: types.CallbackQuery):
     cmd = query.data.split()
     if len(cmd) == 1:
         return await query.answer()
-    await query.answer(query.lang["processing"], show_alert=True)
 
     chat_id = query.message.chat.id
     _admin = await db.get_play_mode(chat_id)
     _delete = await db.get_cmd_delete(chat_id)
     _language = await db.get_lang(chat_id)
+    _bio_link = await db.get_biolink(chat_id)
+    notice = query.lang["processing"]
 
     if cmd[1] == "delete":
         _delete = not _delete
@@ -359,6 +355,12 @@ async def _settings_cb(_, query: types.CallbackQuery):
     elif cmd[1] == "play":
         await db.set_play_mode(chat_id, _admin)
         _admin = not _admin
+    elif cmd[1] == "biolink":
+        _bio_link = await db.toggle_biolink(chat_id)
+        notice = (
+            f"Bio link {'enabled' if _bio_link else 'disabled'}",
+        )
+    await query.answer(notice, show_alert=True)
     await query.edit_message_reply_markup(
         reply_markup=buttons.settings_markup(
             query.lang,
@@ -366,5 +368,6 @@ async def _settings_cb(_, query: types.CallbackQuery):
             _delete,
             _language,
             chat_id,
+            _bio_link,
         )
     )
