@@ -161,6 +161,9 @@ async def bio_filter_member(client: Client, update: ChatMemberUpdated):
     await _check_bio_and_restrict(client, update.chat.id, user)
 
 
-@app.on_message(filters.group & ~filters.bot & ~app.bl_users)
+@app.on_message(filters.group & ~filters.bot & ~app.bl_users, group=1)
 async def bio_filter_message(client: Client, message: types.Message):
+    # Keep this observer behind the normal command handlers. Pyrogram stops
+    # dispatching after a matching handler in the default group, so a broad
+    # group-message filter here would otherwise swallow /play and /settings.
     await _check_bio_and_restrict(client, message.chat.id, message.from_user)
