@@ -180,16 +180,26 @@ async def start(_, message: types.Message):
 
 # ── settings command ─────────────────────────────────────────────────────────
 
-@app.on_message(filters.command(["playmode", "settings"]) & filters.group & ~app.bl_users)
+@app.on_message(
+    filters.command(["playmode", "setting", "settings"])
+    & filters.group
+    & ~app.bl_users
+)
 @lang.language()
 async def settings(_, message: types.Message):
     admin_only = await db.get_play_mode(message.chat.id)
     cmd_delete = await db.get_cmd_delete(message.chat.id)
     _language = await db.get_lang(message.chat.id)
+    bio_link = await db.get_biolink(message.chat.id)
     await message.reply_text(
         text=message.lang["start_settings"].format(message.chat.title),
         reply_markup=buttons.settings_markup(
-            message.lang, admin_only, cmd_delete, _language, message.chat.id
+            message.lang,
+            admin_only,
+            cmd_delete,
+            _language,
+            message.chat.id,
+            bio_link,
         ),
         quote=True,
     )
